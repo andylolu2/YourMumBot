@@ -1,0 +1,18 @@
+# secrets
+*.env
+
+# dev cache
+.vscode
+*.pyc
+*.props
+**/__pycache__
+
+# packages
+.venv
+lib
+
+# data
+data/**/ext
+
+# logs
+**/logs
