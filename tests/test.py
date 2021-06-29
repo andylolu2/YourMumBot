@@ -14,7 +14,7 @@ reset_logging()  # fix bug in stanza
 
 # Args
 log_level = logging.INFO
-total = 20
+total = cst.TESTING_SAMPLES
 
 # setup logging
 current_time = datetime.now().strftime('%H:%M:%S-%d-%m-%y')

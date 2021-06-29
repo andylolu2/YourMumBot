@@ -26,13 +26,18 @@ logger.setLevel(log_level)
 class YourMumClient(discord.Client):
     def __init__(self,
                  guild_id,
-                 corrector="gingerit",
+                 corrector="language_tools",
+                 log_every=cst.LOG_EVERY,
                  *args,
                  **kwargs):
         super().__init__(*args, **kwargs)
         self.guild_id = int(guild_id)
         self.model = YourMumModel(corrector=corrector, logger=logger)
         self.corrector = corrector
+
+        assert log_every >= 1
+        self.log_every = log_every
+        self.msg_count = 0
 
     def __enter__(self):
         return self
@@ -65,11 +70,21 @@ class YourMumClient(discord.Client):
 
     async def on_message(self, message):
         if not message.author.bot:
+            # time inference latency
             start = time.time()
+
+            # compute response
             content = message.content
             yourmumify_content = " ".join(
                 list(self.model.yourmumify(content)))
-            # logger.info(log_memory_used())
+
+            # log memory usage (logging total memory is expensive)
+            # so only log every n requests
+            if self.msg_count % self.log_every == 0:
+                self.msg_count = 0
+                logger.info(log_memory_used())
+            self.msg_count += 1
+
             logger.info(f"Latency: {(time.time()-start):.4}s")
             if not self.block(yourmumify_content, content):
                 await message.channel.send(

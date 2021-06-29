@@ -36,13 +36,13 @@ class YourMumModel():
 
         self._model = detoxify.Detoxify('original-small')
         self._corenlp_client = CoreNLPClient(
-            endpoint="http://localhost:5000",
+            endpoint=cst.CORENLP_ENDPOINT,
             classpath=cst.CORENLP_HOME + "/*",
             annotators=['parse'],
-            timeout=3000,
+            timeout=cst.CORENLP_TIMEOUT,
             output_format='json',
-            memory='1G',
-            threads=2,
+            memory=cst.CORENLP_MEMORY,
+            threads=cst.CORENLP_THREADS,
             be_quiet=True)
 
     def __enter__(self):
