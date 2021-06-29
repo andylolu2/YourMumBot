@@ -12,17 +12,26 @@ endif
 
 check-java-version:	
 	$(eval JAVA_VER := $(shell java --version \
-		| grep -oP "[0-9]+(?=\.[0-9]\.[0-9])" \
+		| grep -oP "[0-9]+(?=\.[0-9]+\.[0-9]+)" \
 		| head -1))
 	@if [ ! $(JAVA_VER) -ge 8 ]; \
 		then echo "Error: at least java 8 is required"; \
 	fi
 
-hello: check-dotnet-version
-	@echo "hello world!"
-	@test -f "Makefile" && \
-	echo "success" || \
-	echo "failed"
+check-python-version:
+	$(eval PYTHON_MAJOR_VER := $(shell python -V \
+		| grep -oP "[0-9](?=\.[0-9]+\.[0-9]+)" \
+		| head -1))
+	$(eval PYTHON_MINOR_VER := $(shell python -V \
+		| grep -oP "(?<=[0-9]\.)[0-9]+(?=\.[0-9]+)" \
+		| head -1))
+	@if [ ! $(PYTHON_MAJOR_VER) -eq 3 ]; \
+		then echo "error: python 3 is needed"; \
+	else \
+		if [ ! $(PYTHON_MINOR_VER) -ge 6 ]; \
+			then echo "error: at least python 3.6 is needed"; \
+		fi; \
+	fi
 
 clean-data:
 	@rm -rf $(RAW_DATA_DIR)
@@ -64,6 +73,11 @@ setup-stanford-corenlp: check-java-version
 	else \
 		echo "Stanford corenlp already exists"; \
 	fi;
+
+build: check-python-version check-java-version
+	@pip install -r requirements.txt
+	@python build.py
+	
 
 CHANNEL_ID ?= 727433810148458498
 data-scrape-discord: setup-discord-chat-exporter

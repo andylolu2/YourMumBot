@@ -2,7 +2,5 @@ import stanza
 
 import constants as cst
 
-try:
-    stanza.install_corenlp(dir=cst.CORENLP_HOME)
-except Exception as e:
-    print(f"{cst.CORENLP_HOME} already exists, skipping...")
+# this will log a warning to console if corenlp folder already exists
+stanza.install_corenlp(dir=cst.CORENLP_HOME)
