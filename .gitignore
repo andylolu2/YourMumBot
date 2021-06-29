@@ -7,6 +7,9 @@
 *.props
 **/__pycache__
 
+# random experiments
+experiments
+
 # packages
 .venv
 lib
