@@ -1,0 +1,59 @@
+A great example of things being taken out of context is text left among redaction. Or, any words or statements that are no longer surrounded by the complete meaning that gives them the sense and perspective that they were intended to have by the person who wrote or spoke them.
+
+A redacted statement could say “there is no way in hell this person is innocent”. And all you would get to see in the redacted version would be “#####%#%%%%%% this person is innocent”.
+
+I wrote about this a awhile back.
+
+Amy Goldfarb's answer to What do redacted comments mean?
+
+There are reasons for redactions and I have no issue with them correctly applied. However, they do show how only a glimpse of a thing can become a distortion. Life can be like that too in many ways. Not just with words.
+
+I think that there is one most important thing to take away from that other answer, which is also extremely relevant here
+
+Quoting myself (which is a super fun kind of citation — I can also pat my own back, or scratch my head while rubbing my tummy…) from my other answer, that is:
+
+”what you don’t see can change what you feel like you do know.
+
+Remember this classic Simpson’s Halloween episode?By Austin Cline
+Updated January 10, 2020
+The fallacy of quoting something out of context is often included in the Fallacy of Accent, and it is true that there are strong parallels. Aristotle's original Fallacy of Accent referred solely to shifting the accent on syllables within words, and it is already stretched in modern discussions of fallacies to include shifting the accent between words within a sentence. To expand it further to include shifting emphasis on entire passages is, perhaps, going a bit far. For that reason, the concept of "quoting out of context" gets its own section.
+
+What does it mean to quote someone out of context? After all, every quotation necessarily excludes large sections of the original material and is thus an "out of context" quotation. What makes this a fallacy is to take a selective quotation which distorts, alters, or even reverses the originally intended meaning. This can be done accidentally or deliberately.
+
+Examples and Discussion Quoting out of Context
+A good example is already hinted at in the discussion of the Fallacy of Accent: irony. A statement meant ironically can be taken wrong when in written form because much irony is communicated through the emphasis when spoken. Sometimes, however, that irony is communicated more clearly through the addition of more material. For example:
+
+1. This has been the best play I've seen all year! Of course, it is the only play I've seen all year.
+2. This was a fantastic movie, as long as you aren't looking for plot or character development.
+In both of these reviews, you start out with an ironic observation which is followed by an explanation that communicates that the foregoing was meant to be taken ironically rather than literally. This can be a dangerous tactic for reviewers to employ because unscrupulous promoters can do this:
+
+3. John Smith calls this "the best play I've seen all year!"
+4. "...a fantastic movie..." - Sandy Jones, Daily Herald.
+In both cases, passage of the original material has been taken out of context and thereby given a meaning that is exactly the opposite of what was intended. Because these passages are being used in the implicit argument that others should come to see the play or movie, they qualify as fallacies, in addition to just being unethical.
+
+What you see above is also part of another fallacy, the Appeal to Authority, which attempts to convince you of the truth of the proposition by appealing to the opinion of some authority figure; usually, though, it appeals to their actual opinion rather than a distorted version of it. It is not uncommon for the Quoting Out Of Context fallacy to be combined with an Appeal to Authority, and it is frequently found in creationist arguments.
+
+For example, here is a passage from Charles Darwin, often quoted by creationists:
+
+5. Why then is not every geological formation and every stratum full of such intermediate links? Geology assuredly does not reveal any such finely-graduated organic chain; and this, perhaps, is the most obvious and serious objection which can be urged against the theory. The Origin of Species (1859), Chapter 10
+Obviously, the implication here is that Darwin doubted his own theory and had encountered a problem he could not solve. But let's look at the quote in the context of the two sentences following it:
+
+6. Why then is not every geological formation and every stratum full of such intermediate links? Geology assuredly does not reveal any such finely-graduated organic chain; and this, perhaps, is the most obvious and serious objection which can be urged against the theory.
+The explanation lies, as I believe, in the extreme imperfection of the geological record. In the first place, it should always be borne in mind what sort of intermediate forms must, on the theory, have formerly existed...
+It is now obvious that instead of raising doubts, Darwin was simply using a rhetorical device to introduce his own explanations. The exact same tactic has been used with quotations from Darwin about the development of the eye.
+
+Such methods are not limited to just creationists. Here is a quote from Thomas Henry Huxley used on alt.atheism by Rooster, a.k.a Skeptic:
+
+7. "This is ... all that is essential to Agnosticism. That which Agnostics deny and repudiate, as immoral, is the contrary doctrine, that there are propositions which men ought to believe, without logically satisfactory evidence; and that reprobation ought to attach to the profession of disbelief in such inadequately supported propositions.
+The justification of the Agnostic principle lies in the success which follows upon its application, whether in the field of natural, or in that of civil, history; and in the fact that, so far as these topics are concerned, no sane man thinks of denying its validity."
+The point of this quote is to try and argue that, according to Huxley, all that is "essential" to agnosticism is to deny that there are propositions which we should believe even though we do not have logically satisfactory evidence. However, this quote misrepresents the original passage:
+
+8. I further say that Agnosticism is not properly described as a "negative" creed, nor indeed as a creed of any kind, except in so far as it expresses absolute faith in the validity of a principle, which is as much ethical as intellectual. This principle may be stated in various ways, but they all amount to this: that it is wrong for a man to say that he is certain of the objective truth of any proposition unless he can produce evidence which logically justifies that certainty.
+This is what Agnosticism asserts; and, in my opinion, it is all that is essential to Agnosticism. That which Agnostics deny and repudiate, as immoral, is the contrary doctrine, that there are propositions which men ought to believe, without logically satisfactory evidence; and that reprobation ought to attach to the profession of disbelief in such inadequately supported propositions.
+The justification of the Agnostic principle lies in the success which follows upon its application, whether in the field of natural, or in that of civil, history; and in the fact that, so far as these topics are concerned, no sane man thinks of denying its validity. [emphasis added]
+If you notice, the phrase "it is all that is essential to Agnosticism" actually refers to the preceding passage. Thus, what is "essential" to Huxley's agnosticism is that people should not claim to be certain of ideas when they do not have the evidence which "logically justifies" such certainty. The consequence of adopting this essential principle, then, leads agnostics to repudiate the idea that we ought to believe things when we lack satisfactory evidence.
+
+Combining the Out of Context Fallacy with Other Fallacies
+Another common way to use the fallacy of quoting out of context is to combine with a Straw Man argument. In this, someone is quoted out of context so that their position appears weaker or more extreme than it is. When this false position is refuted, the author pretends that they have refuted the real position of the original person.
+
+Most of the examples above are do not by themselves qualify as arguments. But it would not be unusual to see them as premises in arguments, either explicit or implicit. When this happens, then a fallacy has been committed. Until then, all we have is simply an error.

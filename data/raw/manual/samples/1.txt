@@ -1,0 +1,23 @@
+As more and more communication takes place in digital form, the full range of public conversations are moving online — in groups and broadcasts, in text and video, even with emoji. These discussions reflect the diversity of human experience: some are enlightening and informative, others are humorous and entertaining, and others still are political or religious. Some can also be hateful and ugly. Most responsible communications platforms and systems are now working hard to restrict this kind of hateful content.
+
+Facebook is no exception. We are an open platform for all ideas, a place where we want to encourage self-expression, connection and sharing. At the same time, when people come to Facebook, we always want them to feel welcome and safe. That’s why we have rules against bullying, harassing and threatening someone.
+
+But what happens when someone expresses a hateful idea online without naming a specific person? A post that calls all people of a certain race “violent animals” or describes people of a certain sexual orientation as “disgusting” can feel very personal and, depending on someone’s experiences, could even feel dangerous. In many countries around the world, those kinds of attacks are known as hate speech. We are opposed to hate speech in all its forms, and don’t allow it on our platform.
+
+In this post we want to explain how we define hate speech and approach removing it — as well as some of the complexities that arise when it comes to setting limits on speech at a global scale, in dozens of languages, across many cultures. Our approach, like those of other platforms, has evolved over time and continues to change as we learn from our community, from experts in the field, and as technology provides us new tools to operate more quickly, more accurately and precisely at scale.
+
+Defining Hate Speech
+
+The first challenge in stopping hate speech is defining its boundaries.
+
+People come to Facebook to share their experiences and opinions, and topics like gender, nationality, ethnicity and other personal characteristics are often a part of that discussion. People might disagree about the wisdom of a country’s foreign policy or the morality of certain religious teachings, and we want them to be able to debate those issues on Facebook. But when does something cross the line into hate speech?
+
+Our current definition of hate speech is anything that directly attacks people based on what are known as their “protected characteristics” — race, ethnicity, national origin, religious affiliation, sexual orientation, sex, gender, gender identity, or serious disability or disease.
+
+There is no universally accepted answer for when something crosses the line. Although a number of countries have laws against hate speech, their definitions of it vary significantly.
+
+In Germany, for example, laws forbid incitement to hatred; you could find yourself the subject of a police raid if you post such content online. In the US, on the other hand, even the most vile kinds of speech are legally protected under the US Constitution.
+
+People who live in the same country — or next door — often have different levels of tolerance for speech about protected characteristics. To some, crude humor about a religious leader can be considered both blasphemy and hate speech against all followers of that faith. To others, a battle of gender-based insults may be a mutually enjoyable way of sharing a laugh. Is it OK for a person to post negative things about people of a certain nationality as long as they share that same nationality? What if a young person who refers to an ethnic group using a racial slur is quoting from lyrics of a song?
+
+There is very important academic work in this area that we follow closely. Timothy Garton Ash, for example, has created the Free Speech Debate to look at these issues on a cross-cultural basis. Susan Benesch established the Dangerous Speech Project, which investigates the connection between speech and violence. These projects show how much work is left to be done in defining the boundaries of speech online, which is why we’ll keep participating in this work to help inform our policies at Facebook.
