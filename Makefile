@@ -2,7 +2,7 @@ DISCORD_CHAT_EXPORTER_DIR = "lib/discord-chat-exporter"
 STANFORD_CORENLP_DIR = "lib/stanford-corenlp"
 RAW_DATA_DIR := "data/raw/ext"
 
-include .env
+-include .env
 export
 
 check-dotnet-version:
