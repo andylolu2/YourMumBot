@@ -79,7 +79,7 @@ setup-stanford-corenlp: check-java-version
 		echo "Stanford corenlp already exists"; \
 	fi;
 
-build: check-python-version check-java-version
+build: check-python-venv check-java-version
 	@pip install -r requirements.txt
 	@python build.py
 	
