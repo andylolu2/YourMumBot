@@ -20,10 +20,10 @@ check-java-version:
 
 check-python-version:
 	$(eval PYTHON_MAJOR_VER := $(shell python -V \
-		| grep -oP "[0-9](?=\.[0-9]+\.[0-9]+)" \
+		|& grep -oP "[0-9](?=\.[0-9]+\.[0-9]+)" \
 		| head -1))
 	$(eval PYTHON_MINOR_VER := $(shell python -V \
-		| grep -oP "(?<=[0-9]\.)[0-9]+(?=\.[0-9]+)" \
+		|& grep -oP "(?<=[0-9]\.)[0-9]+(?=\.[0-9]+)" \
 		| head -1))
 	@if [ ! $(PYTHON_MAJOR_VER) -eq 3 ]; \
 		then echo "error: python 3 is needed"; \
