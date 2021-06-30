@@ -18,6 +18,11 @@ check-java-version:
 		then echo "Error: at least java 8 is required"; \
 	fi
 
+check-python-venv:
+ifeq ("${VIRTUAL_ENV}","")
+	$(error "You should run this in a venv")
+endif
+
 check-python-version:
 	$(eval PYTHON_MAJOR_VER := $(shell python -V \
 		|& grep -oP "[0-9](?=\.[0-9]+\.[0-9]+)" \
