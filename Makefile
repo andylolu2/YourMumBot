@@ -1,17 +1,19 @@
+-include .env
+export
+
 DISCORD_CHAT_EXPORTER_DIR = "lib/discord-chat-exporter"
 STANFORD_CORENLP_DIR = "lib/stanford-corenlp"
 RAW_DATA_DIR := "data/raw/ext"
-DOCKER_TAG := "yourmumbot:latest"
-DOCKER_NAME := "yourmumbot"
+DOCKER_NAME := yourmumbot
+DOCKER_TAG := $(DOCKER_NAME):latest
 DOCKER_MEM_MAX := "800m"
 DOCKER_CPU_MAX := "768" # 1024 * 3 / 4
+DHCR_PREFIX := $(DH_USER_NAME)
+GHCR_PREFIX := ghcr.io
 TERRAFORM_VARS := "inputVars.tfvars"
 
 EC2_IP := $(shell cd terraform && \
 	terraform output | grep -oP '(?<=instance_ip = ")[0-9\.]*(?=")')
-
--include .env
-export
 
 check-dotnet-version:
 ifeq ($(shell dotnet --version | grep "3\.1\..*"),)
@@ -78,6 +80,7 @@ setup-discord-chat-exporter: check-dotnet-version
 		echo "DiscordChatExporter already exists"; \
 	fi;
 
+# deprecated: use build.py instead
 setup-stanford-corenlp: check-java-version
 	@if [ ! -d $(STANFORD_CORENLP_DIR) ] ; \
 	then \
@@ -97,17 +100,29 @@ DEV ?= False
 setup: check-python-venv check-java-version
 ifeq ("$(DEV)", "True")
 	@pip install -r requirements.txt
-	@python build.py
 else 
 	@pip install -r prod_requirements.txt
-	@python build.py
 endif	
+	@python build.py
 
 run:
 	@python -m src.main
 
+gh-login:
+	@echo $(CR_PAT) | docker login $(GHCR_PREFIX) -u $(GH_USER_NAME) --password-stdin
+
+dh-login:
+	@echo $(DH_PW) | docker login -u $(DH_USER_NAME) --password-stdin
+	
 docker-build:
 	@docker build -t $(DOCKER_TAG) .
+	@docker image prune -f
+
+docker-tag:
+	@docker tag $(DOCKER_TAG) $(DHCR_PREFIX)/$(DOCKER_TAG)
+
+docker-push: 
+	@docker push $(DHCR_PREFIX)/$(DOCKER_TAG)
 
 CLEAN ?= False
 docker-run: docker-stop
@@ -135,37 +150,70 @@ ifneq ("$(shell docker ps -a | grep $(DOCKER_NAME))", "")
 endif
 
 docker-clean:
-	@docker rmi $(DOCKER_TAG)
+	@docker image prune -f
+	@$(eval IMAGES = $(shell docker images --filter=reference="*$(DOCKER_NAME)*" -q))
+	-@docker rmi -f $(IMAGES)
+
+build:
+	@$(MAKE) docker-clean
+	@$(MAKE) docker-build
+	@$(MAKE) docker-tag
+	@$(MAKE) docker-push 
+
+ssh-add-known-host:
+	@ssh-keyscan -H $(EC2_IP) >> ~/.ssh/known_hosts
 
 ssh-ec2:
 	@ssh ec2-user@$(EC2_IP) $(CMD)
 
 deploy-setup:
-	@make ssh-ec2 CMD='sudo yum update -y'
-	@make ssh-ec2 CMD='sudo amazon-linux-extras install docker'
-	@make ssh-ec2 CMD='sudo service docker start'
-	@make ssh-ec2 CMD='sudo usermod -a -G docker ec2-user'
-	@make ssh-ec2 CMD='docker info'
+	@$(MAKE) ssh-ec2 CMD='sudo yum update -y'
+	@$(MAKE) ssh-ec2 CMD='sudo amazon-linux-extras install docker'
+	@$(MAKE) ssh-ec2 CMD='sudo service docker start'
+	@$(MAKE) ssh-ec2 CMD='sudo usermod -a -G docker ec2-user'
+	@$(MAKE) ssh-ec2 CMD='docker info >/dev/null'
 
-deploy-docker:
-	@docker save $(DOCKER_TAG) | bzip2 | pv | \
-     ssh ec2-user@$(EC2_IP) 'bunzip2 | docker load'
+deploy-clean:
+	@echo "Stopping container..."
+	-@$(MAKE) ssh-ec2 CMD='docker stop $(DOCKER_NAME)'
+	@echo "Removing container..."
+	-@$(MAKE) ssh-ec2 CMD='docker rm $(DOCKER_NAME)'
+	@echo "Removing image..."
+	-@$(MAKE) ssh-ec2 CMD='docker rmi $(DHCR_PREFIX)/$(DOCKER_TAG) >/dev/null'
+	
+deploy-pull:
+	@$(MAKE) ssh-ec2 CMD='docker pull $(DHCR_PREFIX)/$(DOCKER_TAG)'
 	
 deploy-run:
-	@make ssh-ec2 CMD=\
-	'docker run $(FLAGS) -d -e DISCORD_BOT_TOKEN=$(DISCORD_BOT_TOKEN) $(DOCKER_TAG)'
+	@$(MAKE) ssh-ec2 CMD='docker run $(FLAGS) -d --name $(DOCKER_NAME) \
+		-m=$(DOCKER_MEM_MAX) -c=$(DOCKER_CPU_MAX) \
+		-e DISCORD_BOT_TOKEN=$(DISCORD_BOT_TOKEN) \
+		-e ENV=PROD \
+		$(DHCR_PREFIX)/$(DOCKER_TAG)'
+
+deploy:
+	@$(MAKE) deploy-setup
+	@$(MAKE) deploy-clean
+	@$(MAKE) deploy-pull
+	@$(MAKE) deploy-run
+
+deploy-log:
+	@$(MAKE) ssh-ec2 CMD='docker logs $(DOCKER_NAME)'
+
+deploy-stats:
+	@$(MAKE) ssh-ec2 CMD='docker stats $(DOCKER_NAME)'
 
 terraform-cmd:
 	@cd terraform && terraform $(CMD)
 
 terraform-plan:
-	@make terraform-cmd CMD="plan -var-file=$(TERRAFORM_VARS)"
+	@$(MAKE) terraform-cmd CMD="plan -var-file=$(TERRAFORM_VARS)"
 
 terraform-apply:
-	@make terraform-cmd CMD="apply -var-file=$(TERRAFORM_VARS)"
+	@$(MAKE) terraform-cmd CMD="apply -var-file=$(TERRAFORM_VARS)"
 
 terraform-%:
-	@make terraform-cmd CMD="$*"
+	@$(MAKE) terraform-cmd CMD="$*"
 
 CHANNEL_ID ?= 727433810148458498
 data-scrape-discord: setup-discord-chat-exporter
