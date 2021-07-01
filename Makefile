@@ -1,6 +1,14 @@
 DISCORD_CHAT_EXPORTER_DIR = "lib/discord-chat-exporter"
 STANFORD_CORENLP_DIR = "lib/stanford-corenlp"
 RAW_DATA_DIR := "data/raw/ext"
+DOCKER_TAG := "yourmumbot:latest"
+DOCKER_NAME := "yourmumbot"
+DOCKER_MEM_MAX := "800m"
+DOCKER_CPU_MAX := "768" # 1024 * 3 / 4
+TERRAFORM_VARS := "inputVars.tfvars"
+
+EC2_IP := $(shell cd terraform && \
+	terraform output | grep -oP '(?<=instance_ip = ")[0-9\.]*(?=")')
 
 -include .env
 export
@@ -18,9 +26,12 @@ check-java-version:
 		then echo "Error: at least java 8 is required"; \
 	fi
 
+NO_VENV ?= False
 check-python-venv:
-ifeq ("${VIRTUAL_ENV}","")
+ifneq ("$(NO_VENV)", "True")
+ifeq ("$(VIRTUAL_ENV)","")
 	$(error "You should run this in a venv")
+endif
 endif
 
 check-python-version:
@@ -47,7 +58,10 @@ clean-logs:
 clean-tmps:
 	@find . -type f -name "*.props" -delete
 
-clean-all: clean-data clean-logs
+clean-docker:
+	@docker rmi $(DOCKER_TAG)
+
+clean-all: clean-data clean-logs clean-tmps
 
 setup-discord-chat-exporter: check-dotnet-version
 	@if [ ! -d $(DISCORD_CHAT_EXPORTER_DIR) ] ; \
@@ -79,10 +93,79 @@ setup-stanford-corenlp: check-java-version
 		echo "Stanford corenlp already exists"; \
 	fi;
 
-build: check-python-venv check-java-version
+DEV ?= False
+setup: check-python-venv check-java-version
+ifeq ("$(DEV)", "True")
 	@pip install -r requirements.txt
 	@python build.py
+else 
+	@pip install -r prod_requirements.txt
+	@python build.py
+endif	
+
+run:
+	@python -m src.main
+
+docker-build:
+	@docker build -t $(DOCKER_TAG) .
+
+CLEAN ?= False
+docker-run: docker-stop
+ifeq ("$(CLEAN)", "True")
+	$(eval FLAGS += "--rm")
+endif
+	@docker run $(FLAGS) -d --name $(DOCKER_NAME) \
+		-m=$(DOCKER_MEM_MAX) -c=$(DOCKER_CPU_MAX) \
+		-e DISCORD_BOT_TOKEN=$(DISCORD_BOT_TOKEN) $(DOCKER_TAG)
+
+docker-shell:
+	@docker exec -t -i $(DOCKER_NAME) /bin/bash
+
+docker-stats:
+	@docker stats $(DOCKER_NAME)
+
+docker-log:
+	@docker logs $(DOCKER_NAME)
+
+docker-stop:
+ifneq ("$(shell docker ps -a | grep $(DOCKER_NAME))", "")
+	@echo "Stopping $(DOCKER_NAME)..."
+	@docker stop $(DOCKER_NAME)	
+	@docker rm $(DOCKER_NAME)	
+endif
+
+docker-clean:
+	@docker rmi $(DOCKER_TAG)
+
+ssh-ec2:
+	@ssh ec2-user@$(EC2_IP) $(CMD)
+
+deploy-setup:
+	@make ssh-ec2 CMD='sudo yum update -y'
+	@make ssh-ec2 CMD='sudo amazon-linux-extras install docker'
+	@make ssh-ec2 CMD='sudo service docker start'
+	@make ssh-ec2 CMD='sudo usermod -a -G docker ec2-user'
+	@make ssh-ec2 CMD='docker info'
+
+deploy-docker:
+	@docker save $(DOCKER_TAG) | bzip2 | pv | \
+     ssh ec2-user@$(EC2_IP) 'bunzip2 | docker load'
 	
+deploy-run:
+	@make ssh-ec2 CMD=\
+	'docker run $(FLAGS) -d -e DISCORD_BOT_TOKEN=$(DISCORD_BOT_TOKEN) $(DOCKER_TAG)'
+
+terraform-cmd:
+	@cd terraform && terraform $(CMD)
+
+terraform-plan:
+	@make terraform-cmd CMD="plan -var-file=$(TERRAFORM_VARS)"
+
+terraform-apply:
+	@make terraform-cmd CMD="apply -var-file=$(TERRAFORM_VARS)"
+
+terraform-%:
+	@make terraform-cmd CMD="$*"
 
 CHANNEL_ID ?= 727433810148458498
 data-scrape-discord: setup-discord-chat-exporter

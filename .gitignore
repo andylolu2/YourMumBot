@@ -1,6 +1,19 @@
 # secrets
 *.env
 
+# terraform
+# ref: https://github.com/github/gitignore/blob/master/Terraform.gitignore
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+
 # dev cache
 .vscode
 *.pyc
@@ -11,7 +24,7 @@
 experiments
 
 # packages
-.venv
+.*venv
 lib
 
 # data

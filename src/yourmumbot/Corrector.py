@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 
-from gingerit.gingerit import GingerIt
 import language_tool_python as ltp
 
 
@@ -8,16 +7,6 @@ class Corrector(ABC):
     @abstractmethod
     def correct(self, text: str, details=False):
         pass
-
-
-class GingerItCorrector(Corrector):
-    _parser = GingerIt()
-
-    def correct(self, text: str, details=False):
-        if details:
-            return self._parser.parse(text)
-        else:
-            return self._parser.parse(text)['result']
 
 
 class LanguageToolCorrector(Corrector):

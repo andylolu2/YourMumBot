@@ -25,13 +25,11 @@ logger.setLevel(log_level)
 
 class YourMumClient(discord.Client):
     def __init__(self,
-                 guild_id,
                  corrector="language_tools",
                  log_every=cst.LOG_EVERY,
                  *args,
                  **kwargs):
         super().__init__(*args, **kwargs)
-        self.guild_id = int(guild_id)
         self.model = YourMumModel(corrector=corrector, logger=logger)
         self.corrector = corrector
 
@@ -58,12 +56,11 @@ class YourMumClient(discord.Client):
         return False
 
     async def on_ready(self):
-        guild = self.get_guild(self.guild_id)
-        print(
-            f'{self.user} is connected to the following guild:\n'
-            f'{guild.name} (id: {guild.id})\n'
-            f'Running with corrector {self.corrector}'
-        )
+        print(f'{self.user} is connected to the following guilds:')
+        for guild in self.guilds:
+            print(f'{guild.name} (id: {guild.id})')
+        print(f'Running with corrector {self.corrector}')
+
         print("Warming up the model...")
         self.model.warm_up()
         print("Ready!")

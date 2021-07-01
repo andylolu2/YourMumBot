@@ -8,7 +8,7 @@ from stanza.server import CoreNLPClient
 
 import constants as cst
 import helpers.methods as helpers
-from src.yourmumbot.Corrector import GingerItCorrector, LanguageToolCorrector
+from src.yourmumbot.Corrector import LanguageToolCorrector
 
 stanza_logger.setLevel(logging.ERROR)
 
@@ -17,12 +17,10 @@ class YourMumModel():
     _your_mum_node = nltk.tree.Tree('NP', ['your mum'])
 
     def __init__(self, corrector="language_tools", silent=False, logger=None):
-        if corrector == "gingerit":
-            self._corrector = GingerItCorrector()
-        elif corrector == 'language_tools':
+        if corrector == 'language_tools':
             self._corrector = LanguageToolCorrector()
         else:
-            raise ValueError("corrector must be in {gingerit, language_tools}")
+            raise ValueError("corrector must be in {language_tools}")
 
         if logger is None:
             self._logger = logging.getLogger(__name__)
