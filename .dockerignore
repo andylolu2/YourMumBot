@@ -1,0 +1,19 @@
+# secrets
+*.env
+
+# dev cache
+.vscode
+*.pyc
+*.props
+**/__pycache__
+
+# dev directories
+data/
+experiments/
+logs/
+notebooks/
+terraform
+
+# packages
+.*venv
+lib
