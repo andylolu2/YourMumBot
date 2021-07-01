@@ -37,6 +37,8 @@ class YourMumClient(discord.Client):
         self.log_every = log_every
         self.msg_count = 0
 
+        self.connections = 0
+
     def __enter__(self):
         return self
 
@@ -67,8 +69,13 @@ class YourMumClient(discord.Client):
 
     async def on_message(self, message):
         if not message.author.bot:
+            # prevent server from overloading
+            if self.connections >= cst.MAX_CONNECTIONS:
+                return
+
             # time inference latency
             start = time.time()
+            self.connections += 1
 
             # compute response
             content = message.content
@@ -82,9 +89,11 @@ class YourMumClient(discord.Client):
                 logger.info(log_memory_used())
             self.msg_count += 1
 
-            logger.info(f"Latency: {(time.time()-start):.4}s")
+            logger.info(f"Compute latency: {(time.time()-start):.4}s")
             if not self.block(yourmumify_content, content):
                 await message.channel.send(
                     content=yourmumify_content,
                     reference=message,
                     mention_author=False)
+            logger.info(f"Total latency: {(time.time()-start):.4}s")
+            self.connections -= 1

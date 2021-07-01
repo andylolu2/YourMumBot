@@ -14,6 +14,8 @@ CORENLP_HOME = PROJECT_ROOT + "/lib/stanford-corenlp/stanford-corenlp-4.2.2"
 LOGS_DIR = PROJECT_ROOT + "/logs/"
 
 # your mum bot
+BOT_TOKEN = os.getenv(f"DISCORD_{'' if PROD else 'DEV_'}BOT_TOKEN")
+MAX_CONNECTIONS = 3
 LOG_EVERY = 10
 
 # corenlp
