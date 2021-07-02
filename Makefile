@@ -6,7 +6,7 @@ STANFORD_CORENLP_DIR = "lib/stanford-corenlp"
 RAW_DATA_DIR := "data/raw/ext"
 DOCKER_NAME := yourmumbot
 DOCKER_TAG := $(DOCKER_NAME):latest
-DOCKER_MEM_MAX := "800m"
+DOCKER_MEM_MAX := "700m"
 DOCKER_CPU_MAX := "768" # 1024 * 3 / 4
 DHCR_PREFIX := $(DH_USER_NAME)
 GHCR_PREFIX := ghcr.io
@@ -173,11 +173,13 @@ deploy-setup:
 	@$(MAKE) ssh-ec2 CMD='sudo usermod -a -G docker ec2-user'
 	@$(MAKE) ssh-ec2 CMD='docker info >/dev/null'
 
-deploy-clean:
+deploy-stop:
 	@echo "Stopping container..."
 	-@$(MAKE) ssh-ec2 CMD='docker stop $(DOCKER_NAME)'
 	@echo "Removing container..."
 	-@$(MAKE) ssh-ec2 CMD='docker rm $(DOCKER_NAME)'
+
+deploy-clean: deploy-stop
 	@echo "Removing image..."
 	-@$(MAKE) ssh-ec2 CMD='docker rmi $(DHCR_PREFIX)/$(DOCKER_TAG) >/dev/null'
 	
