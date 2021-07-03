@@ -15,7 +15,7 @@ reset_logging()
 # Args
 log_level = logging.INFO
 
-current_time = datetime.now().strftime('%H:%M:%S-%d-%m-%y')
+current_time = datetime.now().strftime('%d-%m-%y-%H:%M:%S')
 filename = f"{cst.LOGS_DIR}/main/yourmumbot-{current_time}.log"
 Path(filename).parent.mkdir(parents=True, exist_ok=True)
 logger = logging.getLogger(__name__)
@@ -47,12 +47,17 @@ class YourMumClient(discord.Client):
 
     @staticmethod
     def block(text, original):
+        yourmum = "your mum"
+        _text = text.lower().replace(" ", "")
+        _yourmum = yourmum.lower().replace(" ", "")
+        _original = original.lower().replace(" ", "")
         if text == "":
             return True
-        if text.lower() == original.lower():
+        if _text == _original:
             return True
-        if text.lower().strip() == 'your mum':
+        if _text == _yourmum:
             return True
+        # sanity check
         if not 'your mum' in text.lower():
             return True
         return False
