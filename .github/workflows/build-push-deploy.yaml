@@ -35,6 +35,10 @@ jobs:
       with:
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
+    - name: Try get terraform output
+      run: |-
+        make terraform-output
+
     - name: Install SSH key
       uses: shimataro/ssh-key-action@v2
       with:
