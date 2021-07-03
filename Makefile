@@ -115,6 +115,7 @@ dh-login:
 	@echo $(DH_PW) | docker login -u $(DH_USER_NAME) --password-stdin
 	
 docker-build:
+	@echo "Building docker image..."
 	@docker build -t $(DOCKER_TAG) .
 	@docker image prune -f
 
@@ -122,6 +123,7 @@ docker-tag:
 	@docker tag $(DOCKER_TAG) $(DHCR_PREFIX)/$(DOCKER_TAG)
 
 docker-push: 
+	@echo "Pushing docker image..."
 	@docker push $(DHCR_PREFIX)/$(DOCKER_TAG)
 
 CLEAN ?= False
