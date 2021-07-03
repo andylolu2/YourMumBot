@@ -168,7 +168,7 @@ ssh-host:
 ssh-add-known-host:
 	@ssh-keyscan -H $(EC2_IP) >> ~/.ssh/known_hosts
 
-ssh-ec2: ssh-add-known-host
+ssh-ec2:
 	@ssh ec2-user@$(EC2_IP) $(CMD)
 
 deploy-setup:
