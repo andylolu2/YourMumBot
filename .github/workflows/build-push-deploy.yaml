@@ -35,16 +35,15 @@ jobs:
       with:
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
-    - name: Try get terraform output
+    - name: Terraform init
       run: |-
         make terraform-init
-        make terraform-output
 
     - name: Install SSH key
       uses: shimataro/ssh-key-action@v2
       with:
         key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-        known_hosts: unnecessary
+        known_hosts: ""
 
     - name: Try SSH with EC2 instance
       run: |-
