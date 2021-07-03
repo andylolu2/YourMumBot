@@ -1,4 +1,10 @@
 terraform {
+  backend "remote" {
+    organization = "andylolu2"
+    workspaces {
+      name = "yourmumbot"
+    }
+  }
   required_providers {
     aws = {
       source  = "hashicorp/aws"
