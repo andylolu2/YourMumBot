@@ -2,8 +2,8 @@ name: Build docker image, push to docker hub, deploy to EC2
 
 on: 
   push:
-    branches:
-      - master
+    tags:
+      - "*"
 
 env:
   DH_USER_NAME: ${{ secrets.DOCKERHUB_USERNAME }}
