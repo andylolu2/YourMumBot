@@ -89,6 +89,11 @@ class YourMumModel():
         if not text.isascii():
             return
 
+        # prevent overloading server
+        if len(text) > cst.INPUT_MAX_CHAR \
+                or len(text.split(" ")) > cst.INPUT_MAX_WORDS:
+            return
+
         # annotate text to find noun phrases (NP) to replace
         ann = self._corenlp_client.annotate(text)
         for sent in ann["sentences"]:
