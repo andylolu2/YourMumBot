@@ -5,6 +5,9 @@ on:
     branches:
       - master
 
+env:
+  DH_USER_NAME: ${{ secrets.DOCKERHUB_USERNAME }}
+
 jobs:
   setup-build-push-deploy:
     runs-on: ubuntu-latest
