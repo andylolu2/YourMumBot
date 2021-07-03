@@ -162,6 +162,9 @@ build:
 	@$(MAKE) docker-tag
 	@$(MAKE) docker-push 
 
+ssh-host:
+	@echo $(EC2_IP)
+
 ssh-add-known-host:
 	@ssh-keyscan -H $(EC2_IP) >> ~/.ssh/known_hosts
 
