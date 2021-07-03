@@ -166,7 +166,7 @@ ssh-host:
 	@echo $(EC2_IP)
 
 ssh-add-known-host:
-	@ssh-keyscan -H $(EC2_IP) >> ~/.ssh/known_hosts
+	ssh-keyscan -H $(EC2_IP) >> ~/.ssh/known_hosts
 
 ssh-ec2:
 	@ssh ec2-user@$(EC2_IP) $(CMD)
