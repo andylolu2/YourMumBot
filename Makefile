@@ -189,9 +189,11 @@ deploy-clean: deploy-stop
 	-@$(MAKE) ssh-ec2 CMD='docker rmi $(DHCR_PREFIX)/$(DOCKER_TAG) >/dev/null'
 	
 deploy-pull:
+	@echo "Pulling image..."
 	@$(MAKE) ssh-ec2 CMD='docker pull $(DHCR_PREFIX)/$(DOCKER_TAG)'
 	
 deploy-run:
+	@echo "Starting container..."
 	@$(MAKE) ssh-ec2 CMD='docker run $(FLAGS) -d --name $(DOCKER_NAME) \
 		-m=$(DOCKER_MEM_MAX) -c=$(DOCKER_CPU_MAX) \
 		-e DISCORD_BOT_TOKEN=$(DISCORD_BOT_TOKEN) \
