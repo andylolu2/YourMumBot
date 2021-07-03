@@ -7,16 +7,13 @@ on:
 
 env:
   DH_USER_NAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
 
 jobs:
   setup-build-push-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Start
-      run: |-
-        echo "Starting setup..."
-
     - name: Checkout
       uses: actions/checkout@v2
 
@@ -50,7 +47,6 @@ jobs:
 
     - name: SSH add known hosts
       run: |-
-        make ssh-host
         make ssh-add-known-host
 
     - name: Try SSH with EC2 instance
