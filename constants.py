@@ -15,7 +15,7 @@ LOGS_DIR = PROJECT_ROOT + "/logs/"
 
 # your mum bot
 BOT_TOKEN = os.getenv(f"DISCORD_{'' if PROD else 'DEV_'}BOT_TOKEN")
-MAX_CONNECTIONS = 3
+MAX_CONNECTIONS = 2
 LOG_EVERY = 10
 
 # corenlp
