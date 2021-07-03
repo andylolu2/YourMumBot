@@ -37,6 +37,7 @@ jobs:
 
     - name: Try get terraform output
       run: |-
+        make terraform-init
         make terraform-output
 
     - name: Install SSH key
