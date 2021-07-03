@@ -28,6 +28,11 @@ but is not limited to:
 - [Sample outputs](#sample-outputs)
 - [How it works](#how-it-works)
   - [Pipeline](#pipeline)
+- [Limits](#limits)
+  - [No of requests](#no-of-requests)
+  - [Input size](#input-size)
+  - [Latency](#latency)
+  - [Memory requirements](#memory-requirements)
 - [Links](#links)
 
 ## Add YourMumBot to your server
@@ -78,6 +83,31 @@ output sentences.
     to the grammatically incorrect output `your mum are very tall`.
 
     `language tools` tries to fix this problem.
+
+## Limits
+
+### No of requests
+
+YourMumBot is currently hosted on a small EC2 instance on AWS. YourMumBot will only process at most 2 requests at the same time. Any other requests will be ignored.
+
+### Input size
+
+YourMumBot only processes user inputs that are 
+shorter than 250 characters and shorter than 
+30 words. This is to ensure quick processing for 
+low latency and prevent a single request to 
+hog to server.
+
+### Latency
+
+Latency is usually around 500 ms.
+
+### Memory requirements
+
+The docker image is about 2.5GB.
+
+To run this model, at least 650MB of RAM is 
+required.
 
 ## Links
 
