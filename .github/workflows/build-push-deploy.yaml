@@ -35,11 +35,11 @@ jobs:
       with:
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
-    - name: Setup SSH keys
-      uses: webfactory/ssh-agent@v0.5.3
+    - name: Install SSH key
+      uses: shimataro/ssh-key-action@v2
       with:
-        ssh-private-key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-
+        key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+        known_hosts: unnecessary
 
     - name: Try SSH with EC2 instance
       run: |-
