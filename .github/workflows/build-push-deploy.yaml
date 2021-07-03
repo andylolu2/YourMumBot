@@ -45,9 +45,13 @@ jobs:
         key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
         known_hosts: 'placeholder'
 
+    - name: SSH add known hosts
+      run: |-
+        make ssh-host
+        make ssh-add-known-host
+
     - name: Try SSH with EC2 instance
       run: |-
-        make ssh-add-known-host
         make ssh-ec2 CMD="pwd"
 
     - name: Build
