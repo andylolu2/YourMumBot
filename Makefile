@@ -13,7 +13,7 @@ GHCR_PREFIX := ghcr.io
 TERRAFORM_VARS := "inputVars.tfvars"
 
 EC2_IP := $(shell cd terraform && \
-	terraform output | grep -oP '(?<=instance_ip = ")[0-9\.]*(?=")')
+	terraform output | grep -m 1 -oP '(?<=instance_ip = ")[0-9\.]*(?=")')
 
 check-dotnet-version:
 ifeq ($(shell dotnet --version | grep "3\.1\..*"),)
