@@ -43,7 +43,7 @@ jobs:
       uses: shimataro/ssh-key-action@v2
       with:
         key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-        known_hosts: ""
+        known_hosts: 'placeholder'
 
     - name: Try SSH with EC2 instance
       run: |-
