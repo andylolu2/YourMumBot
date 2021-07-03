@@ -35,6 +35,17 @@ jobs:
       with:
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
+    - name: Setup SSH keys
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+
+
+    - name: Try SSH with EC2 instance
+      run: |-
+        make ssh-add-known-host
+        make ssh-ec2 CMD="pwd"
+
     - name: Build
       run: |-
         make docker-build
