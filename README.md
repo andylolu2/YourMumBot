@@ -39,8 +39,7 @@ but is not limited to:
 
 Click here :point_down:
 
-[<img src="static/readme/discord-logo.svg" alt="discord logo" width="100">](https://discord.com/api/oauth2/authorize?client_id=856211082720444456&permissions=3072&scope=bot)
-
+[<img src="static/logo.png" alt="discord logo" width="100">](https://discord.com/api/oauth2/authorize?client_id=856211082720444456&permissions=3072&scope=bot)
 ## Sample outputs
 
 ```
