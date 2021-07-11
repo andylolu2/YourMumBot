@@ -54,7 +54,7 @@ class YourMumModel():
         return type(tree) == nltk.tree.Tree and tree.label() == "NP"
 
     def warm_up(self):
-        list(self.yourmumify(cst.WARM_UP_TEXT))
+        list(self.yourmumify(cst.WARM_UP_TEXT, log=False))
         return
 
     def toxic_score(self, texts, key):
@@ -84,7 +84,7 @@ class YourMumModel():
         )
         return self._corrector.correct(text)
 
-    def yourmumify(self, text: str):
+    def yourmumify(self, text: str, log=True):
         # check if input is english
         if not text.isascii():
             return
@@ -98,10 +98,11 @@ class YourMumModel():
         ann = self._corenlp_client.annotate(text)
         for sent in ann["sentences"]:
             tree = nltk.tree.Tree.fromstring(sent["parse"])
-            self._logger.info(
-                'tree: \n'
-                f'{tree.pformat()}'
-            )
+            if log:
+                self._logger.info(
+                    'tree: \n'
+                    f'{tree.pformat()}'
+                )
 
             # replace NP with 'your mum'
             yourmumified = self.replace_np_with_ym(tree)
@@ -115,9 +116,10 @@ class YourMumModel():
                 # evaluate toxicity of augmented setence,
                 # find the most toxic one
                 scores = self.toxic_score(yourmumified, key="toxic")
-                self._logger.info(
-                    f'yourmumify scores: {list(zip(yourmumified, scores))}'
-                )
+                if log:
+                    self._logger.info(
+                        f'yourmumify scores: {list(zip(yourmumified, scores))}'
+                    )
                 best = yourmumified[np.argmax(scores)]
 
                 # apply grammar corrector on final output to catch more errors
