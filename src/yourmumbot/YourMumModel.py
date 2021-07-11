@@ -54,7 +54,7 @@ class YourMumModel():
         return type(tree) == nltk.tree.Tree and tree.label() == "NP"
 
     def warm_up(self):
-        list(self.yourmumify("warm the model up"))
+        list(self.yourmumify(cst.WARM_UP_TEXT))
         return
 
     def toxic_score(self, texts, key):

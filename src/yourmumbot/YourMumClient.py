@@ -1,6 +1,7 @@
 import logging
-from pathlib import Path
 import time
+import asyncio
+from pathlib import Path
 from datetime import datetime
 
 import discord
@@ -15,6 +16,7 @@ reset_logging()
 # Args
 log_level = logging.INFO
 
+# setup logger
 current_time = datetime.now().strftime('%d-%m-%y-%H:%M:%S')
 filename = f"{cst.LOGS_DIR}/main/yourmumbot-{current_time}.log"
 Path(filename).parent.mkdir(parents=True, exist_ok=True)
@@ -38,6 +40,7 @@ class YourMumClient(discord.Client):
         self.msg_count = 0
 
         self.connections = 0
+        self.connections_hist = 0
 
     def __enter__(self):
         return self
@@ -62,15 +65,28 @@ class YourMumClient(discord.Client):
             return True
         return False
 
+    async def dec_connections_hist(self, duration):
+        await asyncio.sleep(duration)
+        self.connections_hist -= 1
+
+    async def keep_model_warm(self):
+        # run every ${cst.STAY_WARM_PERIOD} seconds
+        while True:
+            if self.connections_hist < 1:
+                self.model.warm_up()
+                logger.info("Keeping warm!")
+            await asyncio.sleep(cst.STAY_WARM_PERIOD)
+
     async def on_ready(self):
         print(f'{self.user} is connected to the following guilds:')
         for guild in self.guilds:
             print(f'{guild.name} (id: {guild.id})')
         print(f'Running with corrector {self.corrector}')
-
         print("Warming up the model...")
         self.model.warm_up()
         print("Ready!")
+        print("Keeping model warm...")
+        asyncio.create_task(self.keep_model_warm())
 
     async def on_message(self, message):
         if not message.author.bot:
@@ -80,7 +96,10 @@ class YourMumClient(discord.Client):
 
             # time inference latency
             start = time.time()
+
+            # keep track of no of connections
             self.connections += 1
+            self.connections_hist += 1
 
             # compute response
             content = message.content
@@ -101,4 +120,8 @@ class YourMumClient(discord.Client):
                     reference=message,
                     mention_author=False)
             logger.info(f"Total latency: {(time.time()-start):.4}s")
+
+            # keep track of no of connections
             self.connections -= 1
+            asyncio.create_task(
+                self.dec_connections_hist(cst.STAY_WARM_PERIOD))
