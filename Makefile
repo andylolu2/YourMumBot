@@ -212,6 +212,9 @@ deploy-log:
 deploy-stats:
 	@$(MAKE) ssh-ec2 CMD='docker stats $(DOCKER_NAME)'
 
+deploy-restart:
+	@$(MAKE) ssh-ec2 CMD='docker restart $(DOCKER_NAME)'
+
 terraform-cmd:
 	@cd terraform && terraform $(CMD)
 
