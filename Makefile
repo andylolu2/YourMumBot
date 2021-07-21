@@ -7,7 +7,7 @@ RAW_DATA_DIR := "data/raw/ext"
 DOCKER_NAME := yourmumbot
 DOCKER_TAG := $(DOCKER_NAME):latest
 DOCKER_MEM_MAX := "700m"
-DOCKER_CPU_MAX := "768" # 1024 * 3 / 4
+DOCKER_CPU_MAX := "1.5" # 1024 * 3 / 4
 DHCR_PREFIX := $(DH_USER_NAME)
 GHCR_PREFIX := ghcr.io
 TERRAFORM_VARS := "inputVars.tfvars"
@@ -19,14 +19,6 @@ check-dotnet-version:
 ifeq ($(shell dotnet --version | grep "3\.1\..*"),)
 	$(error ".NET must be at version 3.1")
 endif
-
-check-java-version:	
-	$(eval JAVA_VER := $(shell java --version \
-		| grep -oP "[0-9]+(?=\.[0-9]+\.[0-9]+)" \
-		| head -1))
-	@if [ ! $(JAVA_VER) -ge 8 ]; \
-		then echo "Error: at least java 8 is required"; \
-	fi
 
 NO_VENV ?= False
 check-python-venv:
@@ -81,7 +73,7 @@ setup-discord-chat-exporter: check-dotnet-version
 	fi;
 
 # deprecated: use build.py instead
-setup-stanford-corenlp: check-java-version
+setup-stanford-corenlp:
 	@if [ ! -d $(STANFORD_CORENLP_DIR) ] ; \
 	then \
 		mkdir -p tmp/ && \
@@ -97,7 +89,7 @@ setup-stanford-corenlp: check-java-version
 	fi;
 
 DEV ?= False
-setup: check-python-venv check-java-version
+setup: check-python-venv
 ifeq ("$(DEV)", "True")
 	@pip install -r requirements.txt
 else 
@@ -132,8 +124,19 @@ ifeq ("$(CLEAN)", "True")
 	$(eval FLAGS += "--rm")
 endif
 	@docker run $(FLAGS) -d --name $(DOCKER_NAME) \
-		-m=$(DOCKER_MEM_MAX) -c=$(DOCKER_CPU_MAX) \
+		-m=$(DOCKER_MEM_MAX) --cpus=$(DOCKER_CPU_MAX) \
+		-e ENV=PROD \
 		-e DISCORD_BOT_TOKEN=$(DISCORD_BOT_TOKEN) $(DOCKER_TAG)
+
+docker-run-dev: docker-stop
+ifeq ("$(CLEAN)", "True")
+	$(eval FLAGS += "--rm")
+endif
+	@docker run $(FLAGS) -d --name $(DOCKER_NAME) \
+		-m=$(DOCKER_MEM_MAX) --cpus=$(DOCKER_CPU_MAX) \
+		-e ENV=DEV \
+		-e DISCORD_DEV_BOT_TOKEN=$(DISCORD_DEV_BOT_TOKEN) $(DOCKER_TAG)
+
 
 docker-shell:
 	@docker exec -t -i $(DOCKER_NAME) /bin/bash
@@ -195,7 +198,7 @@ deploy-pull:
 deploy-run:
 	@echo "Starting container..."
 	@$(MAKE) ssh-ec2 CMD='docker run $(FLAGS) -d --name $(DOCKER_NAME) \
-		-m=$(DOCKER_MEM_MAX) -c=$(DOCKER_CPU_MAX) \
+		-m=$(DOCKER_MEM_MAX) --cpus=$(DOCKER_CPU_MAX) \
 		-e DISCORD_BOT_TOKEN=$(DISCORD_BOT_TOKEN) \
 		-e ENV=PROD \
 		$(DHCR_PREFIX)/$(DOCKER_TAG)'
