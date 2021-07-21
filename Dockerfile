@@ -1,10 +1,6 @@
-FROM python:3.8-slim-buster
+FROM adoptopenjdk/openjdk14:jre-14.0.1_7-alpine
 
-# install java
-# ref: https://stackoverflow.com/questions/61815233/install-java-runtime-in-debian-based-docker-image
-RUN mkdir -p /usr/share/man/man1 /usr/share/man/man2
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends openjdk-11-jre-headless
+COPY --from=python:3.8-slim-buster / /
 
 # install make
 RUN apt-get update && apt-get install make
