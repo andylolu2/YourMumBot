@@ -24,9 +24,13 @@ STAY_WARM_PERIOD = 60
 
 # corenlp
 CORENLP_TIMEOUT = 3000
-CORENLP_ENDPOINT = "http://localhost:5000"
+CORENLP_ENDPOINT = "http://localhost:9000"
 CORENLP_MEMORY = "200M" if PROD else "2G"
 CORENLP_THREADS = 1 if PROD else 4
+
+# language tools
+LANG_NAME = "en-US"
+LANGTOOL_ENDPOINT = "http://localhost:8010"
 
 # tests
 TESTING_SAMPLES = 50

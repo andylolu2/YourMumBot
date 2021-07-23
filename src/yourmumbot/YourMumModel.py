@@ -5,6 +5,7 @@ import nltk
 import numpy as np
 from stanza.server.client import logger as stanza_logger
 from stanza.server import CoreNLPClient
+from stanza.server import StartServer
 
 import constants as cst
 import helpers.methods as helpers
@@ -34,14 +35,16 @@ class YourMumModel():
 
         self._model = detoxify.Detoxify('original-small')
         self._corenlp_client = CoreNLPClient(
+            start_server=StartServer.DONT_START,
             endpoint=cst.CORENLP_ENDPOINT,
-            classpath=cst.CORENLP_HOME + "/*",
-            annotators=['parse'],
+            # classpath=cst.CORENLP_HOME + "/*",
+            # annotators=['parse'],
             timeout=cst.CORENLP_TIMEOUT,
             output_format='json',
-            memory=cst.CORENLP_MEMORY,
-            threads=cst.CORENLP_THREADS,
-            be_quiet=True)
+            # memory=cst.CORENLP_MEMORY,
+            # threads=cst.CORENLP_THREADS,
+            be_quiet=True
+        )
 
     def __enter__(self):
         return self
