@@ -1,0 +1,38 @@
+version: "3.9"
+services:
+  bot:
+    build: .
+    image: andylolu24/yourmumbot:latest
+    environment:
+      - ENV
+      - DISCORD_BOT_TOKEN
+      - DISCORD_DEV_BOT_TOKEN
+    depends_on:
+      - corenlp
+      - languagetools
+    network_mode: host
+    deploy:
+      resources:
+        limits:
+          memory: 250m
+  corenlp:
+    image: "nlpbox/corenlp"
+    ports:
+      - 9000:9000
+    environment:
+      - JAVA_XMX=200m
+    deploy:
+      resources:
+        limits:
+          memory: 250m
+  languagetools:
+    image: "erikvl87/languagetool"
+    ports:
+      - 8010:8010
+    environment:
+      - Java_Xmx=200m
+      - Java_Xms=50m
+    deploy:
+      resources:
+        limits:
+          memory: 250m

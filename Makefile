@@ -88,15 +88,6 @@ setup-stanford-corenlp:
 		echo "Stanford corenlp already exists"; \
 	fi;
 
-DEV ?= False
-setup: check-python-venv
-ifeq ("$(DEV)", "True")
-	@pip install -r requirements.txt
-else 
-	@pip install -r prod_requirements.txt
-endif	
-	@python build.py
-
 run:
 	@python -m src.main
 
@@ -114,7 +105,7 @@ docker-build:
 docker-tag:
 	@docker tag $(DOCKER_TAG) $(DHCR_PREFIX)/$(DOCKER_TAG)
 
-docker-push: 
+docker-push: docker-tag
 	@echo "Pushing docker image..."
 	@docker push $(DHCR_PREFIX)/$(DOCKER_TAG)
 
@@ -159,6 +150,9 @@ docker-clean:
 	@$(eval IMAGES = $(shell docker images --filter=reference="*$(DOCKER_NAME)*" -q))
 	-@docker rmi -f $(IMAGES)
 
+docker-compose-stats:
+	@docker stats --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.MemPerc}}\t{{.NetIO}}\t{{.BlockIO}}\t{{.PIDs}}"
+
 build:
 	@$(MAKE) docker-clean
 	@$(MAKE) docker-build
@@ -172,20 +166,27 @@ ssh-add-known-host:
 	ssh-keyscan -H $(EC2_IP) >> ~/.ssh/known_hosts
 
 ssh-ec2:
-	@ssh ec2-user@$(EC2_IP) $(CMD)
+	@ssh ec2-user@$(EC2_IP) "$(CMD)"
+
+testing:
+	@echo 'echo update && \
+		echo hi'
 
 deploy-setup:
-	@$(MAKE) ssh-ec2 CMD='sudo yum update -y'
-	@$(MAKE) ssh-ec2 CMD='sudo amazon-linux-extras install docker'
-	@$(MAKE) ssh-ec2 CMD='sudo service docker start'
-	@$(MAKE) ssh-ec2 CMD='sudo usermod -a -G docker ec2-user'
-	@$(MAKE) ssh-ec2 CMD='docker info >/dev/null'
+	@$(MAKE) ssh-ec2 CMD='sudo yum update -y && \
+		sudo amazon-linux-extras install docker && \
+		sudo service docker start && \
+		sudo usermod -a -G docker ec2-user && \
+		docker info >/dev/null && \
+		sudo curl -L https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$$$$(uname -s)-$$$$(uname -m) -o /usr/local/bin/docker-compose && \
+		sudo chmod +x /usr/local/bin/docker-compose && \
+		docker-compose version'
 
 deploy-stop:
-	@echo "Stopping container..."
-	-@$(MAKE) ssh-ec2 CMD='docker stop $(DOCKER_NAME)'
-	@echo "Removing container..."
-	-@$(MAKE) ssh-ec2 CMD='docker rm $(DOCKER_NAME)'
+	-@$(MAKE) ssh-ec2 CMD='docker stop $(DOCKER_NAME) && \
+		docker rm $(DOCKER_NAME) && \
+		docker container prune && \
+		docker image prune'
 
 deploy-clean: deploy-stop
 	@echo "Removing image..."
@@ -196,12 +197,10 @@ deploy-pull:
 	@$(MAKE) ssh-ec2 CMD='docker pull $(DHCR_PREFIX)/$(DOCKER_TAG)'
 	
 deploy-run:
-	@echo "Starting container..."
-	@$(MAKE) ssh-ec2 CMD='docker run $(FLAGS) -d --name $(DOCKER_NAME) \
-		-m=$(DOCKER_MEM_MAX) --cpus=$(DOCKER_CPU_MAX) \
-		-e DISCORD_BOT_TOKEN=$(DISCORD_BOT_TOKEN) \
-		-e ENV=PROD \
-		$(DHCR_PREFIX)/$(DOCKER_TAG)'
+	# @docker-compose -H "ssh://ec2-user@$(EC2_IP)" pull
+	@ENV=PROD DISCORD_BOT_TOKEN=$(DISCORD_BOT_TOKEN) \
+		DISCORD_DEV_BOT_TOKEN='Placeholder' \
+		docker-compose -H "ssh://ec2-user@$(EC2_IP)" up -d
 
 deploy:
 	@$(MAKE) deploy-setup
