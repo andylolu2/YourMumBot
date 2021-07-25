@@ -3,6 +3,7 @@ services:
   bot:
     build: .
     image: andylolu24/yourmumbot:latest
+    container_name: yourmumbot
     environment:
       - ENV
       - DISCORD_BOT_TOKEN

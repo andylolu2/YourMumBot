@@ -53,14 +53,9 @@ jobs:
       run: |-
         make ssh-ec2 CMD="pwd"
 
-    - name: Build
+    - name: Build-Push
       run: |-
-        make docker-build
-    
-    - name: Publish
-      run: |-
-        make docker-tag
-        make docker-push
+        make build
 
     - name: Deploy
       run: |-
