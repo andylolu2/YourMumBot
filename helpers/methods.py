@@ -9,8 +9,8 @@ def sublists(l, max_len=None):
                 yield l[i:j + 1]
 
 
-def apply_n(n, f, x):
+def apply_n(n, f, x, **kwargs):
     out = x
-    for i in range(n):
-        out = f(out)
+    for _ in range(n):
+        out = f(out, **kwargs)
     return out
