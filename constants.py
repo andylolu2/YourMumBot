@@ -19,6 +19,7 @@ MAX_CONNECTIONS = 1
 INPUT_MAX_WORDS = 35
 INPUT_MAX_CHAR = 250
 LOG_EVERY = 10
+LOG_FORMAT = "%(asctime)s:%(levelname)s:%(name)s: %(message)s"
 WARM_UP_TEXT = "warm the model up"
 STAY_WARM_PERIOD = 60
 

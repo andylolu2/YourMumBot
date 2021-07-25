@@ -81,13 +81,18 @@ class YourMumModel():
                 res.append(aug_phrase)
         return res
 
-    def correct_grammar(self, text):
-        self._logger.info(
-            f'grammar: {self._corrector.correct(text, True)}'
-        )
+    def correct_grammar(self, text, log=True):
+        if log:
+            details = self._corrector.correct(text, True)
+            if len(details) > 0:
+                self._logger.info(
+                    f'Grammar: {details}'
+                )
         return self._corrector.correct(text)
 
     def yourmumify(self, text: str, log=True):
+        if log:
+            self._logger.info(f'Input: {text}')
         # check if input is english
         if not text.isascii():
             return
@@ -103,7 +108,7 @@ class YourMumModel():
             tree = nltk.tree.Tree.fromstring(sent["parse"])
             if log:
                 self._logger.info(
-                    'tree: \n'
+                    'Tree: \n'
                     f'{tree.pformat()}'
                 )
 
@@ -114,17 +119,18 @@ class YourMumModel():
             if yourmumified:
                 for i, yourmum_sent in enumerate(yourmumified):
                     # correct grammatical mistakes
-                    yourmumified[i] = self.correct_grammar(yourmum_sent)
+                    yourmumified[i] = self.correct_grammar(
+                        yourmum_sent, log=log)
 
                 # evaluate toxicity of augmented setence,
                 # find the most toxic one
                 scores = self.toxic_score(yourmumified, key="toxic")
                 if log:
                     self._logger.info(
-                        f'yourmumify scores: {list(zip(yourmumified, scores))}'
+                        f'Detoxify scores: {list(zip(yourmumified, scores))}'
                     )
                 best = yourmumified[np.argmax(scores)]
 
                 # apply grammar corrector on final output to catch more errors
-                best = helpers.apply_n(2, self.correct_grammar, best)
+                best = helpers.apply_n(2, self.correct_grammar, best, log=log)
                 yield best
