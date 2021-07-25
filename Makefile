@@ -12,8 +12,7 @@ DHCR_PREFIX := $(DH_USER_NAME)
 GHCR_PREFIX := ghcr.io
 TERRAFORM_VARS := "inputVars.tfvars"
 
-EC2_IP := $(shell cd terraform && \
-	terraform output | grep -m 1 -oP '(?<=instance_ip = ")[0-9\.]*(?=")')
+EC2_IP := $(shell cd terraform && terraform output instance_ip)
 SSH_URL := "ssh://ec2-user@$(EC2_IP)"
 
 check-dotnet-version:
