@@ -21,7 +21,10 @@ current_time = datetime.now().strftime('%d-%m-%y-%H:%M:%S')
 filename = f"{cst.LOGS_DIR}/main/yourmumbot-{current_time}.log"
 Path(filename).parent.mkdir(parents=True, exist_ok=True)
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=log_level, filename=filename)
+logging.basicConfig(
+    level=log_level,
+    filename=filename,
+    format=cst.LOG_FORMAT)
 logger.setLevel(log_level)
 
 
@@ -101,27 +104,29 @@ class YourMumClient(discord.Client):
             self.connections += 1
             self.connections_hist += 1
 
-            # compute response
-            content = message.content
-            yourmumify_content = " ".join(
-                list(self.model.yourmumify(content)))
+            try:
+                # compute response
+                content = message.content
+                yourmumify_content = " ".join(
+                    list(self.model.yourmumify(content)))
 
-            # log memory usage (logging total memory is expensive)
-            # so only log every n requests
-            if self.msg_count % self.log_every == 0:
-                self.msg_count = 0
-                logger.info(log_memory_used())
-            self.msg_count += 1
+                # log memory usage (logging total memory is expensive)
+                # so only log every n requests
+                if self.msg_count % self.log_every == 0:
+                    self.msg_count = 0
+                    logger.info(log_memory_used())
+                self.msg_count += 1
 
-            logger.info(f"Compute latency: {(time.time()-start):.4}s")
-            if not self.block(yourmumify_content, content):
-                await message.channel.send(
-                    content=yourmumify_content,
-                    reference=message,
-                    mention_author=False)
-            logger.info(f"Total latency: {(time.time()-start):.4}s")
-
-            # keep track of no of connections
-            self.connections -= 1
-            asyncio.create_task(
-                self.dec_connections_hist(cst.STAY_WARM_PERIOD))
+                logger.info(f"Compute latency: {(time.time()-start):.4}s")
+                if not self.block(yourmumify_content, content):
+                    logger.info(f"Yourmumified: {yourmumify_content}")
+                    await message.channel.send(
+                        content=yourmumify_content,
+                        reference=message,
+                        mention_author=False)
+                logger.info(f"Total latency: {(time.time()-start):.4}s")
+            finally:
+                # keep track of no of connections
+                self.connections -= 1
+                asyncio.create_task(
+                    self.dec_connections_hist(cst.STAY_WARM_PERIOD))
