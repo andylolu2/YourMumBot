@@ -115,6 +115,12 @@ resource "aws_instance" "app_server" {
   key_name                    = aws_key_pair.ssh_key.key_name
   associate_public_ip_address = true
   subnet_id                   = aws_subnet.subnet.id
+  root_block_device {
+    volume_size = 16
+    tags = {
+      "Name" = "${var.tag}Disk"
+    }
+  }
   tags = {
     "Name" = "${var.tag}Server"
   }
