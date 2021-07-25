@@ -14,6 +14,7 @@ TERRAFORM_VARS := "inputVars.tfvars"
 
 EC2_IP := $(shell cd terraform && \
 	terraform output | grep -m 1 -oP '(?<=instance_ip = ")[0-9\.]*(?=")')
+SSH_URL := "ssh://ec2-user@$(EC2_IP)"
 
 check-dotnet-version:
 ifeq ($(shell dotnet --version | grep "3\.1\..*"),)
@@ -99,64 +100,43 @@ dh-login:
 	
 docker-build:
 	@echo "Building docker image..."
-	@docker build -t $(DOCKER_TAG) .
+	@docker-compose build
 	@docker image prune -f
 
-docker-tag:
-	@docker tag $(DOCKER_TAG) $(DHCR_PREFIX)/$(DOCKER_TAG)
-
-docker-push: docker-tag
+docker-push:
 	@echo "Pushing docker image..."
-	@docker push $(DHCR_PREFIX)/$(DOCKER_TAG)
+	@docker-compose push
 
-CLEAN ?= False
 docker-run: docker-stop
-ifeq ("$(CLEAN)", "True")
-	$(eval FLAGS += "--rm")
-endif
-	@docker run $(FLAGS) -d --name $(DOCKER_NAME) \
-		-m=$(DOCKER_MEM_MAX) --cpus=$(DOCKER_CPU_MAX) \
-		-e ENV=PROD \
-		-e DISCORD_BOT_TOKEN=$(DISCORD_BOT_TOKEN) $(DOCKER_TAG)
+	@ENV=PROD \
+		DISCORD_BOT_TOKEN=$(DISCORD_BOT_TOKEN) \
+		docker-compose up -d
 
 docker-run-dev: docker-stop
-ifeq ("$(CLEAN)", "True")
-	$(eval FLAGS += "--rm")
-endif
-	@docker run $(FLAGS) -d --name $(DOCKER_NAME) \
-		-m=$(DOCKER_MEM_MAX) --cpus=$(DOCKER_CPU_MAX) \
-		-e ENV=DEV \
-		-e DISCORD_DEV_BOT_TOKEN=$(DISCORD_DEV_BOT_TOKEN) $(DOCKER_TAG)
+	@ENV=DEV \
+		DISCORD_DEV_BOT_TOKEN=$(DISCORD_DEV_BOT_TOKEN) \
+		docker-compose up -d
 
+docker-run-server:
+	@docker-compose up -d corenlp languagetools
 
 docker-shell:
-	@docker exec -t -i $(DOCKER_NAME) /bin/bash
+	@docker exec -it $(DOCKER_NAME) /bin/bash
 
 docker-stats:
-	@docker stats $(DOCKER_NAME)
+	@docker stats --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.MemPerc}}\t{{.NetIO}}\t{{.BlockIO}}\t{{.PIDs}}"
 
 docker-log:
 	@docker logs $(DOCKER_NAME)
 
+docker-logs:
+	@docker-compose logs
+
 docker-stop:
-ifneq ("$(shell docker ps -a | grep $(DOCKER_NAME))", "")
-	@echo "Stopping $(DOCKER_NAME)..."
-	@docker stop $(DOCKER_NAME)	
-	@docker rm $(DOCKER_NAME)	
-endif
-
-docker-clean:
-	@docker image prune -f
-	@$(eval IMAGES = $(shell docker images --filter=reference="*$(DOCKER_NAME)*" -q))
-	-@docker rmi -f $(IMAGES)
-
-docker-compose-stats:
-	@docker stats --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.MemPerc}}\t{{.NetIO}}\t{{.BlockIO}}\t{{.PIDs}}"
+	@docker-compose down
 
 build:
-	@$(MAKE) docker-clean
 	@$(MAKE) docker-build
-	@$(MAKE) docker-tag
 	@$(MAKE) docker-push 
 
 ssh-host:
@@ -168,10 +148,6 @@ ssh-add-known-host:
 ssh-ec2:
 	@ssh ec2-user@$(EC2_IP) "$(CMD)"
 
-testing:
-	@echo 'echo update && \
-		echo hi'
-
 deploy-setup:
 	@$(MAKE) ssh-ec2 CMD='sudo yum update -y && \
 		sudo amazon-linux-extras install docker && \
@@ -182,40 +158,31 @@ deploy-setup:
 		sudo chmod +x /usr/local/bin/docker-compose && \
 		docker-compose version'
 
-deploy-stop:
-	-@$(MAKE) ssh-ec2 CMD='docker stop $(DOCKER_NAME) && \
-		docker rm $(DOCKER_NAME) && \
-		docker container prune && \
-		docker image prune'
-
-deploy-clean: deploy-stop
-	@echo "Removing image..."
-	-@$(MAKE) ssh-ec2 CMD='docker rmi $(DHCR_PREFIX)/$(DOCKER_TAG) >/dev/null'
+deploy-clean:
+	@echo "Stopping..."
+	@docker-compose -H $(SSH_URL) down
 	
 deploy-pull:
 	@echo "Pulling image..."
-	@$(MAKE) ssh-ec2 CMD='docker pull $(DHCR_PREFIX)/$(DOCKER_TAG)'
+	@docker-compose -H $(SSH_URL) pull
 	
 deploy-run:
-	# @docker-compose -H "ssh://ec2-user@$(EC2_IP)" pull
 	@ENV=PROD DISCORD_BOT_TOKEN=$(DISCORD_BOT_TOKEN) \
-		DISCORD_DEV_BOT_TOKEN='Placeholder' \
-		docker-compose -H "ssh://ec2-user@$(EC2_IP)" up -d
+		docker-compose -H "ssh://ec2-user@$(EC2_IP)" up -d \
+		--no-build
 
 deploy:
 	@$(MAKE) deploy-setup
-	@$(MAKE) deploy-clean
 	@$(MAKE) deploy-pull
+	@$(MAKE) deploy-clean
 	@$(MAKE) deploy-run
 
 deploy-log:
-	@$(MAKE) ssh-ec2 CMD='docker logs $(DOCKER_NAME)'
+	@docker-compose -H "ssh://ec2-user@$(EC2_IP)" logs bot
 
 deploy-stats:
-	@$(MAKE) ssh-ec2 CMD='docker stats $(DOCKER_NAME)'
-
-deploy-restart:
-	@$(MAKE) ssh-ec2 CMD='docker restart $(DOCKER_NAME)'
+	@docker -H $(SSH_URL) stats \
+		--format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.MemPerc}}\t{{.NetIO}}\t{{.BlockIO}}\t{{.PIDs}}"
 
 terraform-cmd:
 	@cd terraform && terraform $(CMD)
