@@ -99,25 +99,25 @@ dh-login:
 	
 docker-build:
 	@echo "Building docker image..."
-	@docker-compose build
+	@docker-compose -p $(DOCKER_NAME) build
 	@docker image prune -f
 
 docker-push:
 	@echo "Pushing docker image..."
-	@docker-compose push
+	@docker-compose -p $(DOCKER_NAME) push
 
 docker-run: docker-stop
 	@ENV=PROD \
 		DISCORD_BOT_TOKEN=$(DISCORD_BOT_TOKEN) \
-		docker-compose up -d
+		docker-compose -p $(DOCKER_NAME) up -d
 
 docker-run-dev: docker-stop
 	@ENV=DEV \
 		DISCORD_DEV_BOT_TOKEN=$(DISCORD_DEV_BOT_TOKEN) \
-		docker-compose up -d
+		docker-compose -p $(DOCKER_NAME) up -d
 
 docker-run-server:
-	@docker-compose up -d corenlp languagetools
+	@docker-compose -p $(DOCKER_NAME) up -d corenlp languagetools
 
 docker-shell:
 	@docker exec -it $(DOCKER_NAME) /bin/bash
@@ -129,10 +129,10 @@ docker-log:
 	@docker logs $(DOCKER_NAME)
 
 docker-logs:
-	@docker-compose logs
+	@docker-compose -p $(DOCKER_NAME) logs
 
 docker-stop:
-	@docker-compose down
+	@docker-compose -p $(DOCKER_NAME) down
 
 build:
 	@$(MAKE) docker-build
@@ -159,16 +159,16 @@ deploy-setup:
 
 deploy-clean:
 	@echo "Stopping..."
-	@docker-compose -H $(SSH_URL) down
+	@docker-compose -p $(DOCKER_NAME) -H $(SSH_URL) down
 	
 deploy-pull:
 	@echo "Pulling image..."
-	@docker-compose -H $(SSH_URL) pull
+	@docker-compose -p $(DOCKER_NAME) -H $(SSH_URL) pull
 	
 deploy-run:
 	@ENV=PROD DISCORD_BOT_TOKEN=$(DISCORD_BOT_TOKEN) \
-		docker-compose -H "ssh://ec2-user@$(EC2_IP)" up -d \
-		--no-build
+		docker-compose -p $(DOCKER_NAME) -H "ssh://ec2-user@$(EC2_IP)" \
+		up -d --no-build
 
 deploy:
 	@$(MAKE) deploy-setup
@@ -177,7 +177,7 @@ deploy:
 	@$(MAKE) deploy-run
 
 deploy-log:
-	@docker-compose -H "ssh://ec2-user@$(EC2_IP)" logs bot
+	@docker-compose -p $(DOCKER_NAME) -H "ssh://ec2-user@$(EC2_IP)" logs bot
 
 deploy-stats:
 	@docker -H $(SSH_URL) stats \
