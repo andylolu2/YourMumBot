@@ -1,4 +1,4 @@
 tag               = "YourMumBot"
-aws_region        = "ap-northeast-2"
-aws_local_zone    = "ap-northeast-2a"
+aws_region        = "us-east-1"
+aws_local_zone    = "us-east-1a"
 ec2_instance_type = "t3a.micro"
