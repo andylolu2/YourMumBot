@@ -3,7 +3,7 @@ import time
 
 import language_tool_python as ltp
 
-import constants as cst
+import api.constants as cst
 
 
 class Corrector(ABC):
@@ -14,14 +14,20 @@ class Corrector(ABC):
 
 class LanguageToolCorrector(Corrector):
     _parser = None
+    retries = cst.LT_MAX_RETRIES
     while _parser is None:
         try:
             _parser = ltp.LanguageTool(cst.LANG_NAME,
-                                       remote_server=cst.LANGTOOL_ENDPOINT)
+                                       remote_server=cst.LT_ENDPOINT)
             print('Connected!')
         except ltp.utils.LanguageToolError as e:
-            print('Failed to connect to language tools. Reconnecting...')
-            time.sleep(1)
+            if retries <= 0:
+                raise e
+            else:
+                print('Failed to connect to language tools. Reconnecting...')
+                print(f'{retries} retires left...')
+                time.sleep(cst.LT_TIMEOUT)
+            retries -= 1
 
     def ignore_match(self, match: ltp.Match) -> bool:
         return not match.ruleId == 'MORFOLOGIK_RULE_EN_US'

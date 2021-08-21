@@ -90,9 +90,24 @@ resource "aws_security_group" "sg_ssh" {
   vpc_id = aws_vpc.vpc.id
   ingress {
     // For SSH into EC2 instance
+    description = "ssh"
     protocol    = "tcp"
     from_port   = 22
     to_port     = 22
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  ingress {
+    description = "public http"
+    protocol    = "tcp"
+    from_port   = 80
+    to_port     = 80
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  ingress {
+    description = "public https"
+    protocol    = "tcp"
+    from_port   = 443
+    to_port     = 443
     cidr_blocks = ["0.0.0.0/0"]
   }
   // Terraform removes the default rule
