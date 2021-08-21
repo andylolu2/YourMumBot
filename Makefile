@@ -91,6 +91,9 @@ setup-stanford-corenlp:
 run:
 	@python -m src.main
 
+run-api:
+	@cd src && uvicorn api.main:app --reload
+
 gh-login:
 	@echo $(CR_PAT) | docker login $(GHCR_PREFIX) -u $(GH_USER_NAME) --password-stdin
 
@@ -183,9 +186,6 @@ deploy-stats:
 	@docker -H $(SSH_URL) stats \
 		--format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.MemPerc}}\t{{.NetIO}}\t{{.BlockIO}}\t{{.PIDs}}"
 
-terraform-cmd:
-	cd terraform && terraform $(CMD)
-
 # terraform-plan:
 # 	@$(MAKE) terraform-cmd CMD="plan -var-file=$(TERRAFORM_VARS)"
 
@@ -196,7 +196,10 @@ terraform-cmd:
 # 	@$(MAKE) terraform-cmd CMD="detroy -var-file=$(TERRAFORM_VARS)"
 
 terraform-%:
-	$(MAKE) terraform-cmd CMD="$* -var-file=$(TERRAFORM_VARS)"
+	terraform -chdir=terraform $* -var-file=$(TERRAFORM_VARS)
+
+terraform-output:
+	terraform -chdir=terraform output
 
 CHANNEL_ID ?= 727433810148458498
 data-scrape-discord: setup-discord-chat-exporter

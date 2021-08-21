@@ -1,4 +1,5 @@
 import logging
+import random
 
 import detoxify
 import nltk
@@ -7,9 +8,9 @@ from stanza.server.client import logger as stanza_logger
 from stanza.server import CoreNLPClient
 from stanza.server import StartServer
 
-import constants as cst
-import helpers.methods as helpers
-from src.yourmumbot.Corrector import LanguageToolCorrector
+import api.helpers.methods as helpers
+from api.Corrector import LanguageToolCorrector
+import api.constants as cst
 
 stanza_logger.setLevel(logging.ERROR)
 
@@ -37,12 +38,9 @@ class YourMumModel():
         self._corenlp_client = CoreNLPClient(
             start_server=StartServer.DONT_START,
             endpoint=cst.CORENLP_ENDPOINT,
-            # classpath=cst.CORENLP_HOME + "/*",
-            # annotators=['parse'],
+            annotators=['parse'],
             timeout=cst.CORENLP_TIMEOUT,
             output_format='json',
-            # memory=cst.CORENLP_MEMORY,
-            # threads=cst.CORENLP_THREADS,
             be_quiet=True
         )
 
@@ -79,15 +77,18 @@ class YourMumModel():
             aug_phrase = " ".join(copy.leaves())
             if aug_phrase != "your mum":
                 res.append(aug_phrase)
+        if len(res) > cst.MAX_SUB_SAMPLES:
+            res = sorted(res, key=len)[:cst.MAX_SUB_SAMPLES]
+            # res = random.sample(res, cst.MAX_SUB_SAMPLES)
         return res
 
     def correct_grammar(self, text, log=True):
-        if log:
-            details = self._corrector.correct(text, True)
-            if len(details) > 0:
-                self._logger.info(
-                    f'Grammar: {details}'
-                )
+        # if log:
+        #     details = self._corrector.correct(text, True)
+        #     if len(details) > 0:
+        #         self._logger.info(
+        #             f'Grammar: {details}'
+        #         )
         return self._corrector.correct(text)
 
     def yourmumify(self, text: str, log=True):
