@@ -1,15 +1,11 @@
-FROM python:3.8-slim-buster
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.7
 
-# install make
-RUN apt-get update && apt-get install make
-
-# build app
 WORKDIR /app
 
-COPY prod_requirements.txt build.py build_Makefile ./
+COPY ./api/requirements.txt ./api/build.py ./
 
-RUN make -f build_Makefile setup NO_VENV=True DEV=False
+RUN pip install -r requirements.txt && python build.py
 
-COPY . .
+COPY ./helper ./helper
 
-CMD [ "python3", "-u", "-m", "src.main" ]
+COPY ./api ./api

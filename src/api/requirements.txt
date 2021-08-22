@@ -1,0 +1,16 @@
+
+--find-links https://download.pytorch.org/whl/torch_stable.html
+
+detoxify==0.2.2
+language-tool-python==2.5.4
+nltk==3.6.2
+numpy==1.21.0
+python-dotenv==0.18.0
+stanza==1.2.1
+tokenizers==0.10.3
+torch==1.9.0+cpu
+tqdm==4.61.1
+transformers==4.8.2
+typing-extensions==3.10.0.0
+urllib3==1.26.6
+yarl==1.6.3
