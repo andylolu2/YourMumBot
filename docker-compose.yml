@@ -1,38 +1,51 @@
 version: "3.9"
 services:
   bot:
-    build: .
-    image: andylolu24/yourmumbot:latest
-    container_name: yourmumbot
+    build:
+      context: ./src
+      dockerfile: ./bot/Dockerfile
+    image: andylolu24/yourmum-bot:latest
     environment:
       - ENV
       - DISCORD_BOT_TOKEN
       - DISCORD_DEV_BOT_TOKEN
     depends_on:
-      - corenlp
-      - languagetools
+      - api
     network_mode: host
     deploy:
       resources:
         limits:
-          memory: 250m
+          memory: 50m
+  api:
+    build: 
+      context: ./src
+      dockerfile: ./api/Dockerfile
+    image: andylolu24/yourmum-api:latest
+    network_mode: host
+    depends_on:
+      - corenlp
+      - languagetools
+    deploy:
+      resources:
+        limits:
+          memory: 200m
   corenlp:
     image: "nlpbox/corenlp"
-    ports:
-      - 9000:9000
     environment:
       - JAVA_XMX=200m
+    ports:
+      - 9000:9000
     deploy:
       resources:
         limits:
           memory: 250m
   languagetools:
     image: "erikvl87/languagetool"
-    ports:
-      - 8010:8010
     environment:
       - Java_Xmx=200m
       - Java_Xms=50m
+    ports:
+      - 8010:8010
     deploy:
       resources:
         limits:

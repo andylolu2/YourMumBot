@@ -88,17 +88,17 @@ setup-stanford-corenlp:
 		echo "Stanford corenlp already exists"; \
 	fi;
 
-run:
-	@python -m src.main
-
-run-api:
-	@cd src && uvicorn api.main:app --reload
-
 gh-login:
 	@echo $(CR_PAT) | docker login $(GHCR_PREFIX) -u $(GH_USER_NAME) --password-stdin
 
 dh-login:
 	@echo $(DH_PW) | docker login -u $(DH_USER_NAME) --password-stdin
+
+run:
+	@cd src && python -m bot.main
+
+run-api:
+	@cd src && uvicorn api.main:app --reload
 	
 docker-build:
 	@echo "Building docker image..."
@@ -110,17 +110,29 @@ docker-push:
 	@docker-compose -p $(DOCKER_NAME) push
 
 docker-run: docker-stop
-	@ENV=PROD \
+	@ENV=$(ENV) \
 		DISCORD_BOT_TOKEN=$(DISCORD_BOT_TOKEN) \
 		docker-compose -p $(DOCKER_NAME) up -d
 
-docker-run-dev: docker-stop
-	@ENV=DEV \
-		DISCORD_DEV_BOT_TOKEN=$(DISCORD_DEV_BOT_TOKEN) \
-		docker-compose -p $(DOCKER_NAME) up -d
+docker-stop:
+	@docker-compose -p $(DOCKER_NAME) down
 
 docker-run-server:
 	@docker-compose -p $(DOCKER_NAME) up -d corenlp languagetools
+
+docker-stop-server:
+	@docker-compose -p $(DOCKER_NAME) stop corenlp languagetools
+	@docker-compose -p $(DOCKER_NAME) rm -f corenlp languagetools
+
+docker-build-api:
+	@docker-compose -p $(DOCKER_NAME) build corenlp languagetools api
+
+docker-run-api:
+	@docker-compose -p $(DOCKER_NAME) up -d corenlp languagetools api
+
+docker-stop-api:
+	@docker-compose -p $(DOCKER_NAME) stop corenlp languagetools api
+	@docker-compose -p $(DOCKER_NAME) rm -f corenlp languagetools api
 
 docker-shell:
 	@docker exec -it $(DOCKER_NAME) /bin/bash
@@ -133,9 +145,6 @@ docker-log:
 
 docker-logs:
 	@docker-compose -p $(DOCKER_NAME) logs
-
-docker-stop:
-	@docker-compose -p $(DOCKER_NAME) down
 
 build:
 	@$(MAKE) docker-build
