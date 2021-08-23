@@ -1,5 +1,7 @@
-from fastapi import APIRouter, Request
-from fastapi.responses import RedirectResponse
+import asyncio
+from fastapi import APIRouter, Request, HTTPException
+from starlette.status import HTTP_503_SERVICE_UNAVAILABLE
+from asyncio import Lock
 
 from api import STAY_WARM_PERIOD
 from api.schema import RequestBody
@@ -7,6 +9,7 @@ from api.model import YourMumModel
 from api.logger import logger
 from api.helper import repeat_every
 
+lock = Lock()
 router = APIRouter()
 model = YourMumModel()
 
@@ -19,16 +22,20 @@ def keep_warm():
 
 
 @router.get("/")
-def index():
-    return RedirectResponse(url='/docs')
+async def index():
+    return {'msg': 'Hello to the YourMum API!'}
 
 
 @router.post("/yourmumify")
-def yourmumify(req: Request, body: RequestBody):
-    logger.info(f'msg: {body.msg}')
-    outputs, scores = model.yourmumify(body.msg)
-    return {
-        'input': body.msg,
-        'response': outputs,
-        'scores': scores
-    }
+async def yourmumify(req: Request, body: RequestBody):
+    if lock.locked():
+        raise HTTPException(
+            status_code=HTTP_503_SERVICE_UNAVAILABLE, detail="Service busy")
+    async with lock:
+        logger.info(f'msg: {body.msg}')
+        outputs, scores = model.yourmumify(body.msg)
+        return {
+            'input': body.msg,
+            'response': outputs,
+            'scores': scores
+        }

@@ -1,6 +1,5 @@
 from typing import Callable, Optional, Awaitable
 from functools import wraps
-import traceback
 import asyncio
 
 from fastapi.concurrency import run_in_threadpool
