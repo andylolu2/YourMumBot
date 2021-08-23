@@ -21,6 +21,9 @@ services:
       context: ./src
       dockerfile: ./api/Dockerfile
     image: andylolu24/yourmum-api:latest
+    environment:
+      - MODULE_NAME=api.main
+      - MAX_WORKERS=1
     network_mode: host
     depends_on:
       - corenlp
