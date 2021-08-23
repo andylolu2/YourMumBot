@@ -46,6 +46,8 @@ def get_logger(name: str,
                callbacks: List[Tuple[str, Callable[[], Any]]] = []
                ) -> logging.Logger:
     logger = logging.getLogger(name)
+    if logger.hasHandlers():
+        logger.handlers.clear()
 
     # log format
     formatter = logging.Formatter(log_format)

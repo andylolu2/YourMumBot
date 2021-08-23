@@ -1,8 +1,10 @@
 from typing import Optional
 from contextvars import ContextVar
+import asyncio
 import time
-import requests
 
+import aiohttp
+import aiohttp
 import discord
 
 from bot import API_ENDPOINT, API_TIMEOUT, LOG_FORMAT, LOG_LEVEL
@@ -19,21 +21,23 @@ class YourMumClient(discord.Client):
         contextvars=[('request_id', request_id)]
     )
 
-    def post_api(self, text: str) -> Optional[str]:
+    async def post_api(self, text: str) -> Optional[str]:
         body = {'msg': text}
         try:
             start = time.time()
-            req = requests.post(API_ENDPOINT, json=body, timeout=API_TIMEOUT)
-            self.logger.info(f"API latency: {(time.time()-start):.4}s")
-            if req.status_code == 200:
-                res = req.json()
-                res = " ".join(res['response'])
-                return res
-            else:
-                self.logger.warning(
-                    f'API respond with code {req.status_code}.')
-                return None
-        except requests.exceptions.Timeout:
+            timeout = aiohttp.ClientTimeout(total=API_TIMEOUT)
+            async with aiohttp.ClientSession(timeout=timeout) as session:
+                async with session.post(API_ENDPOINT, json=body) as r:
+                    self.logger.info(f"API latency: {(time.time()-start):.4}s")
+                    if r.status == 200:
+                        res = await r.json()
+                        res = " ".join(res['response'])
+                        return res
+                    else:
+                        self.logger.warning(
+                            f'API respond with code {r.status}.')
+                        return None
+        except asyncio.TimeoutError:
             self.logger.warning(f'API did not respond in {API_TIMEOUT}s.')
             return None
 
@@ -74,7 +78,7 @@ class YourMumClient(discord.Client):
             content = message.content
             self.logger.info(f"Input: {content}")
 
-            yourmumify_content = self.post_api(content)
+            yourmumify_content = await self.post_api(content)
             if not self.block(yourmumify_content, content):
                 self.logger.info(f"Yourmumified: {yourmumify_content}")
                 await message.channel.send(

@@ -4,6 +4,7 @@ import time
 import language_tool_python as ltp
 
 from api import LANG_NAME, LT_ENDPOINT, LT_MAX_RETRIES, LT_TIMEOUT
+from api.logger import logger
 
 
 class Corrector(ABC):
@@ -20,13 +21,14 @@ class LanguageToolCorrector(Corrector):
             try:
                 self._parser = ltp.LanguageTool(LANG_NAME,
                                                 remote_server=LT_ENDPOINT)
-                print('Connected!')
+                logger.info('LanguageTools Connected!')
             except ltp.utils.LanguageToolError as e:
                 if retries <= 0:
                     raise e
                 else:
-                    print('Failed to connect to language tools. Reconnecting...')
-                    print(f'{retries} retires left...')
+                    logger.info(
+                        'Failed to connect to language tools. Reconnecting...')
+                    logger.info(f'{retries} retires left...')
                     time.sleep(LT_TIMEOUT)
                 retries -= 1
 
