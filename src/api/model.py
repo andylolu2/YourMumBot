@@ -46,18 +46,18 @@ class YourMumModel():
         '''
         Creates your mum jokes from given text.
         :param text: Text to yourmumify.
-        :param log: Default True. Whether or not to log info.
+        :param log: Default True. Whether or not to log.
         :return: List of yourmumified strings. Each string in the list corresponds to a sentence in the input text. If the input contains 2 sentences, then the output will be a list of 2 strings.
         '''
         bests, best_scores = [], []
         if log:
-            logger.info(f'Input: {text}')
+            logger.debug(f'Input: {text}')
 
         ann = self._corenlp_client.annotate(text)
         for sent in ann["sentences"]:
             tree = nltk.tree.Tree.fromstring(sent["parse"])
             if log:
-                logger.info(
+                logger.debug(
                     'Tree: \n'
                     f'{tree.pformat()}'
                 )
@@ -77,7 +77,7 @@ class YourMumModel():
             # find the most toxic one
             scores = self._toxic_score(yourmumified, key="toxic")
             if log:
-                logger.info(
+                logger.debug(
                     f'Detoxify scores: {list(zip(yourmumified, scores))}'
                 )
             best = yourmumified[np.argmax(scores)]
