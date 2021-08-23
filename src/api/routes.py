@@ -33,7 +33,7 @@ async def yourmumify(req: Request, body: RequestBody):
             status_code=HTTP_503_SERVICE_UNAVAILABLE, detail="Service busy")
     async with lock:
         logger.info(f'msg: {body.msg}')
-        outputs, scores = model.yourmumify(body.msg)
+        outputs, scores = await model.async_yourmumify(body.msg)
         return {
             'input': body.msg,
             'response': outputs,

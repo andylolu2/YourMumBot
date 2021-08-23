@@ -1,7 +1,9 @@
 from __future__ import annotations
+from typing import List, Awaitable
+import functools
 import logging
 import re
-from typing import List
+import asyncio
 
 import detoxify
 import nltk
@@ -92,6 +94,17 @@ class YourMumModel():
         Warms up the model by calling with a sample text.
         '''
         self.yourmumify(WARM_UP_TEXT, log=False)
+
+    async def async_yourmumify(self, text: str, log: bool = True) -> Awaitable[List[str]]:
+        '''
+        Executes yourmumify asynchronously.
+        '''
+        loop = asyncio.get_event_loop()
+        return await loop.run_in_executor(None, functools.partial(
+            self.yourmumify,
+            text,
+            log=log
+        ))
 
     # private methods
     @staticmethod
