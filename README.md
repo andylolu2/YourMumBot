@@ -114,7 +114,7 @@ Latency is usually around 500-1000 ms.
 
 ### Endpoint
 
-There is an api endpoint available at [http://3.211.27.31/yourmumify](). 
+There is an api endpoint available at [http://3.211.27.31/yourmumify](http://3.211.27.31/). 
 Docs a can be read via [this link](http://3.211.27.31/docs)
 
 ### Responses
