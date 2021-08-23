@@ -24,22 +24,31 @@ but is not limited to:
 
 <!-- omit in toc -->
 ## Table of contents
-- [Add YourMumBot to your server](#add-yourmumbot-to-your-server)
+- [Up and Running](#up-and-running)
 - [Sample outputs](#sample-outputs)
 - [How it works](#how-it-works)
   - [Pipeline](#pipeline)
-- [Limits](#limits)
+- [Discord Bot](#discord-bot)
   - [No of requests](#no-of-requests)
   - [Input size](#input-size)
   - [Latency](#latency)
+- [API](#api)
+  - [Endpoint](#endpoint)
+  - [Responses](#responses)
+- [Run your own API / Bot](#run-your-own-api--bot)
+  - [Pre-Built Docker Images](#pre-built-docker-images)
   - [Memory requirements](#memory-requirements)
-- [Links](#links)
 
-## Add YourMumBot to your server
+## Up and Running
+
+Add `Your Mum` to your discord channel!
 
 Click here :point_down:
 
-[<img src="static/logo.png" alt="discord logo" width="100">](https://discord.com/api/oauth2/authorize?client_id=856211082720444456&permissions=3072&scope=bot)
+[<img src="static/logo.png" alt="discord logo" width="100">](https://discord.com/api/oauth2/authorize?client_id=856211082720444456&permissions=68608&scope=bot)
+
+Try the API endpoint: [here](http://3.211.27.31/docs)
+
 ## Sample outputs
 
 ```
@@ -83,31 +92,58 @@ output sentences.
 
     `language tools` tries to fix this problem.
 
-## Limits
+## Discord Bot
 
 ### No of requests
 
-YourMumBot is currently hosted on a small EC2 instance on AWS. YourMumBot will only process at most 2 requests at the same time. Any other requests will be ignored.
+YourMumBot is currently hosted on a small EC2 instance on AWS. YourMumBot will only process at most 1 requests at the same time. Any other requests will be ignored.
 
 ### Input size
 
 YourMumBot only processes user inputs that are 
-shorter than 250 characters and shorter than 
-30 words. This is to ensure quick processing for 
+shorter than 150 characters and shorter than 
+25 words. This is to ensure quick processing for 
 low latency and prevent a single request to 
 hog to server.
 
 ### Latency
 
-Latency is usually around 500 ms.
+Latency is usually around 500-1000 ms.
+
+## API
+
+### Endpoint
+
+There is an api endpoint available at [http://3.211.27.31/yourmumify](). 
+Docs a can be read via [this link](http://3.211.27.31/docs)
+
+### Responses
+
+Response code
+- `200`: Request was successful.
+- `422`: Request body is not valid:
+  - `msg` can only contain ascii characters.
+  - `msg` length must be less than or equal to `150` characters.
+  - `msg` must contain than or equal to `25` words.
+- `500`: Internal server error. Please post an issue.
+- `503`: Server busy processing another request. (It can only process one request at a time.)
+
+## Run your own API / Bot
+
+Source code is available here. 
+
+To run do
+
+```console
+docker-compose up -d
+```
+
+### Pre-Built Docker Images
+
+- [API Docker Hub](https://hub.docker.com/repository/docker/andylolu24/yourmum-api)
+- [Bot Docker Hub](https://hub.docker.com/repository/docker/andylolu24/yourmum-bot)
 
 ### Memory requirements
 
-The docker image is about 2.5GB.
-
-To run this model, at least 650MB of RAM is 
-required.
-
-## Links
-
-- Docker Hub repository: [link](https://hub.docker.com/repository/docker/andylolu24/yourmumbot)
+1GB of RAM is barely sufficient to run all related services for this model.
+Swap file is needed to prevent Out-Of-Memory errors.
