@@ -172,6 +172,7 @@ deploy-setup:
 deploy-clean:
 	@echo "Stopping..."
 	@docker-compose -p $(DOCKER_NAME) -H $(SSH_URL) down
+	@docker -H $(SSH_URL) image prune -f
 	
 deploy-pull:
 	@echo "Pulling image..."
@@ -194,15 +195,6 @@ deploy-log:
 deploy-stats:
 	@docker -H $(SSH_URL) stats \
 		--format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.MemPerc}}\t{{.NetIO}}\t{{.BlockIO}}\t{{.PIDs}}"
-
-# terraform-plan:
-# 	@$(MAKE) terraform-cmd CMD="plan -var-file=$(TERRAFORM_VARS)"
-
-# terraform-apply:
-# 	@$(MAKE) terraform-cmd CMD="apply -var-file=$(TERRAFORM_VARS)"
-
-# terraform-destory:
-# 	@$(MAKE) terraform-cmd CMD="detroy -var-file=$(TERRAFORM_VARS)"
 
 terraform-%:
 	terraform -chdir=terraform $* -var-file=$(TERRAFORM_VARS)
