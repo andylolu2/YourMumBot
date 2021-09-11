@@ -75,7 +75,7 @@ class YourMumClient(discord.Client):
             self.req_counter += 1
             self.request_id.set(current_id)
 
-            content = message.content
+            content = message.clean_content
             self.logger.info(f"Input: {content}")
 
             yourmumify_content = await self.post_api(content)
