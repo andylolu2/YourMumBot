@@ -17,7 +17,7 @@ INPUT_MAX_CHAR = 150
 # model
 MAX_SUB_SAMPLES = 5
 WARM_UP_TEXT = "warm the model up"
-STAY_WARM_PERIOD = 60
+STAY_WARM_PERIOD = 120
 
 # logger config
 LOG_NAME = "yourmum.api"
