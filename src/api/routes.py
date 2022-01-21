@@ -32,7 +32,7 @@ async def yourmumify(req: Request, body: RequestBody):
         raise HTTPException(
             status_code=HTTP_503_SERVICE_UNAVAILABLE, detail="Service busy")
     async with lock:
-        logger.info(f'msg: {body.msg}')
+        logger.debug(f'msg: {body.msg}')
         outputs, scores = await model.async_yourmumify(body.msg)
         return {
             'input': body.msg,

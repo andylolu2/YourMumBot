@@ -76,11 +76,11 @@ class YourMumClient(discord.Client):
             self.request_id.set(current_id)
 
             content = message.clean_content
-            self.logger.info(f"Input: {content}")
+            self.logger.debug(f"Input: {content}")
 
             yourmumify_content = await self.post_api(content)
             if not self.block(yourmumify_content, content):
-                self.logger.info(f"Yourmumified: {yourmumify_content}")
+                self.logger.debug(f"Yourmumified: {yourmumify_content}")
                 await message.channel.send(
                     content=yourmumify_content,
                     reference=message,
