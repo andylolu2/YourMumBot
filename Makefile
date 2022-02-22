@@ -41,12 +41,12 @@ run-api:
 	
 docker-build:
 	@echo "Building docker image..."
-	@docker-compose -p $(DOCKER_NAME) build
+	@docker-compose --compatibility -p $(DOCKER_NAME) build
 	@docker image prune -f
 
 docker-push:
 	@echo "Pushing docker image..."
-	@docker-compose -p $(DOCKER_NAME) push
+	@docker-compose --compatibility -p $(DOCKER_NAME) push
 
 docker-run: docker-stop
 	@ENV=$(ENV) \
@@ -60,18 +60,18 @@ docker-run-server:
 	@docker-compose --compatibility -p $(DOCKER_NAME) up -d corenlp languagetools
 
 docker-stop-server:
-	@docker-compose -p $(DOCKER_NAME) stop corenlp languagetools
-	@docker-compose -p $(DOCKER_NAME) rm -f corenlp languagetools
+	@docker-compose --compatibility -p $(DOCKER_NAME) stop corenlp languagetools
+	@docker-compose --compatibility -p $(DOCKER_NAME) rm -f corenlp languagetools
 
 docker-build-api:
-	@docker-compose -p $(DOCKER_NAME) build corenlp languagetools api
+	@docker-compose --compatibility -p $(DOCKER_NAME) build corenlp languagetools api
 
 docker-run-api:
 	@docker-compose --compatibility -p $(DOCKER_NAME) up -d corenlp languagetools api
 
 docker-stop-api:
-	@docker-compose -p $(DOCKER_NAME) stop corenlp languagetools api
-	@docker-compose -p $(DOCKER_NAME) rm -f corenlp languagetools api
+	@docker-compose --compatibility -p $(DOCKER_NAME) stop corenlp languagetools api
+	@docker-compose --compatibility -p $(DOCKER_NAME) rm -f corenlp languagetools api
 
 docker-shell:
 	@docker exec -it $(DOCKER_NAME) /bin/bash
@@ -83,7 +83,7 @@ docker-log:
 	@docker logs $(DOCKER_NAME)
 
 docker-logs:
-	@docker-compose -p $(DOCKER_NAME) logs
+	@docker-compose --compatibility -p $(DOCKER_NAME) logs
 
 build:
 	@$(MAKE) docker-build
@@ -97,7 +97,7 @@ ssh-instance:
 
 deploy-pull:
 	@echo "Pulling image..."
-	docker-compose -p $(DOCKER_NAME) -H $(SSH_URL) pull
+	docker-compose --compatibility -p $(DOCKER_NAME) -H $(SSH_URL) pull
 
 deploy-clean:
 	@echo "Stopping current containers..."
@@ -113,8 +113,8 @@ deploy:
 	@$(MAKE) deploy-clean
 	@$(MAKE) deploy-run
 
-deploy-log:
-	@docker-compose -p $(DOCKER_NAME) -H $(SSH_URL) logs api
+deploy-log-%:
+	@docker-compose --compatibility -p $(DOCKER_NAME) -H $(SSH_URL) logs $*
 
 deploy-stats:
 	@docker -H $(SSH_URL) stats \
