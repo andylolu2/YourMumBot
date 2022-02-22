@@ -6,7 +6,6 @@ on:
       - "*"
 
 env:
-  DH_USER_NAME: ${{ secrets.DOCKERHUB_USERNAME }}
   DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
 
 jobs:
@@ -16,13 +15,6 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ap-northeast-2
 
     - name: Login to Docker Hub
       uses: docker/login-action@v1
@@ -43,20 +35,24 @@ jobs:
     - name: Install SSH key
       uses: shimataro/ssh-key-action@v2
       with:
-        key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+        key: ${{ secrets.DO_SSH_PRIVATE_KEY }}
         known_hosts: 'placeholder'
 
     - name: SSH add known hosts
       run: |-
         make ssh-add-known-host
 
-    - name: Try SSH with EC2 instance
+    - name: Try SSH to instance
       run: |-
-        make ssh-ec2 CMD="pwd"
+        make ssh-instance CMD="pwd"
 
-    - name: Build-Push
+    - name: Build
       run: |-
-        make build
+        make docker-build
+
+    - name: Push
+      run: |-
+        make docker-push
 
     - name: Deploy
       run: |-

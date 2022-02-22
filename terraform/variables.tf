@@ -1,19 +1,19 @@
+variable "do_token" {
+  description = "Digital ocean personal access token. Provided as workspace variable on terraform cloud."
+  type        = string
+}
+
 variable "tag" {
   description = "Tag name"
   type        = string
 }
 
-variable "aws_region" {
-  description = "The region for the aws resources"
+variable "app_size" {
+  description = "The instance type for the droplet. Can be found at https://slugs.do-api.dev/."
   type        = string
 }
 
-variable "aws_local_zone" {
-  description = "The local zone for the aws resources. This must match aws_region"
-  type        = string
-}
-
-variable "ec2_instance_type" {
-  description = "The instance type for the ec2 instance"
+variable "region" {
+  description = "The region for the resources. Can be found at https://slugs.do-api.dev/."
   type        = string
 }
