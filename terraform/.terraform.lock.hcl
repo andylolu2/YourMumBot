@@ -1,21 +1,25 @@
 # This file is maintained automatically by "terraform init".
 # Manual edits may be lost in future updates.
 
-provider "registry.terraform.io/hashicorp/aws" {
-  version     = "3.47.0"
-  constraints = "~> 3.47"
+provider "registry.terraform.io/digitalocean/digitalocean" {
+  version     = "2.17.1"
+  constraints = "~> 2.0"
   hashes = [
-    "h1:gXncRh1KtgLNMeb3/bYq5CvGfy8YTR+n6ds1noc5ggc=",
-    "zh:07bb6bda5b9fdb782dd568a2e85cfe0ab108770e2218f3411e57ed845c58af40",
-    "zh:0926b161a109e75bdc8691e8a32f568b4cd77a55510cf27573261fb5ba382287",
-    "zh:0a91adf25a78ad31d547da513db24f493d27592d3675ed291a7698351c30992d",
-    "zh:0f95f01e3bf0dab306ed86afb1ca00e01ce94ed6696765158d544b1569483b13",
-    "zh:10466a520c617354ebbee9366267e0878b091a15d49cb97846511e952bd9db90",
-    "zh:2fc627d3dc5a6df904591c673d640e6d3a697dcc12d1a43cf71066a47314f7c0",
-    "zh:a85476047ddb359acdc0db5b9cbe0a7e13c4e65289b03f6c93303d0452db450b",
-    "zh:cbadde98d44e8953cc78487b6788b97cff12632e9fda065bb970b001205662cb",
-    "zh:db05702323c5fa253d5e067458340b89126738b8f6a9847465ee3e75b0f28320",
-    "zh:e16cf52ff3b067adb33a75b89c03f9b03e666e2d45adb2ee296ae12b36cd5776",
-    "zh:fcb8f73f7f5e195e3345d5694b526e0d5e77562d2e7dd468366ee15b1be6b418",
+    "h1:0m6ziZVws3U9LNnqv8zFbGeMnHVD+YJFb5Utu+5pFoA=",
+    "zh:08a5eae6ead1b9b066079af9c4efe5142e632be6ce4f0b52ab07f50e3b323523",
+    "zh:09cf6edd6ef8f5db63db3b513a72cfe34460237d58ef21e976294203e529305d",
+    "zh:45c8b7d2d2689624bf80349c3014f5b1a0f745eb31370b4e803d88366cbae2cf",
+    "zh:4663333a306eb5a786a08adae183606c3a511698a22af4c703ff8d3610d40aa7",
+    "zh:5f4b64435960d9bd69756f24546723956a0deb2a70058d6d513de8e44561edc0",
+    "zh:68b7f3225902ecb323654e02e5575218fc07bdfbf606add44f494f7ed8354abe",
+    "zh:8c00ce94e86c439b38a706699fa37514256e26016d20ad67244aca062dfc22df",
+    "zh:8c70196f7797995843b3fb4343df56b4aa18150c6baccadf3739bba2f26529f5",
+    "zh:9f5f757fa833dc3aaa8e74cbe0de98a8d18f0db0602469c7f7b5f2e2e6787e5b",
+    "zh:a2ef584aca64e217bc14ef71f628b092b7663b308a09f64537e2de3bebab26b5",
+    "zh:c6de4e8b7fdc5b1a649b41014a0f8773b8ca2d14fb17ce4e0ec46dcb5cac00b1",
+    "zh:d58c0a63e1c2fab53700fd5e68f25a26d642919bbac529816ff283d171369109",
+    "zh:ef7bf5d68e1e26890628e8cc7801bf85699ea354cf60a87c25b55484b8ef0363",
+    "zh:f3022214c908c640a8d0f33a5bc1a85effc80068f7df6aebe3cf730e0648ab9f",
+    "zh:fe2c450490a1be3c612db5719e1833e271e63f1f7581ba6c4b79432053e69bb7",
   ]
 }
