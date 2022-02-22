@@ -3,6 +3,8 @@
 
 # dev cache
 **/.vscode
-**/*.pyc
+
+**/*.py[cod]
 **/*.props
 **/__pycache__
+*$py.class

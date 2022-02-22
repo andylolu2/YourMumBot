@@ -18,7 +18,7 @@ inappropriate.
 I am **NOT** responsible for misuse of this bot / code. Misuse includes 
 but is not limited to: 
 - Using this bot to offend someone
-- Using this bot in stituations where someone would find it offensive
+- Using this bot in situations where someone would find it offensive
 - Causing undesired results by using this code
 
 
@@ -64,7 +64,7 @@ Bot: Today is your mum. Your mum is very tall.
 
 ## How it works
 
-YourMumBot makes use of 3 main nlp models / tools:
+YourMumBot makes use of 3 main NLP models / tools:
 1. [Stanford CoreNLP](https://stanfordnlp.github.io/CoreNLP/) 
 via [stanza](https://stanfordnlp.github.io/stanza/corenlp_client.html)
 2. [Detoxify](https://github.com/unitaryai/detoxify)
@@ -75,7 +75,7 @@ via [stanza](https://stanfordnlp.github.io/stanza/corenlp_client.html)
 1. The `CoreNLP` library 
 [constituency parser](https://stanfordnlp.github.io/CoreNLP/parse.html)
 is used to 
-identify noun phrases (NP) in a input sentence. 
+identify noun phrases (NP) in an input sentence. 
 2. These NPs serves as potential places in the sentence where we can
 substitute the NP with the string `your mum`. This works surprisingly 
 well.
@@ -96,7 +96,8 @@ output sentences.
 
 ### No of requests
 
-YourMumBot is currently hosted on a small EC2 instance on AWS. YourMumBot will only process at most 1 requests at the same time. Any other requests will be ignored.
+YourMumBot is currently hosted on a small droplet on Digital Ocean. 
+YourMumBot will only process at most 1 requests at the same time. Any other requests will be ignored.
 
 ### Input size
 
@@ -114,8 +115,8 @@ Latency is usually around 500-1000 ms.
 
 ### Endpoint
 
-There is an api endpoint available at [http://3.211.27.31/yourmumify](http://3.211.27.31/). 
-Docs a can be read via [this link](http://3.211.27.31/docs)
+There is an api endpoint available at [http://143.198.242.151/yourmumify](http://143.198.242.151/docs). 
+Docs a can be read via [this link](http://143.198.242.151/docs)
 
 ### Responses
 
@@ -145,5 +146,5 @@ docker-compose up -d
 
 ### Memory requirements
 
-1GB of RAM is barely sufficient to run all related services for this model.
+1 GB of RAM is barely sufficient to run all related services for this model.
 Swap file is needed to prevent Out-Of-Memory errors.
