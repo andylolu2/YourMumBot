@@ -52,7 +52,9 @@ Click here :point_down:
 
 [<img src="static/logo.png" alt="discord logo" width="100">](https://discord.com/api/oauth2/authorize?client_id=856211082720444456&permissions=68608&scope=bot)
 
-Try the API endpoint: [here](http://3.211.27.31/docs)
+Try the API endpoint: [here](http://143.198.242.151/docs)
+
+[![DigitalOcean Referral Badge](https://web-platforms.sfo2.digitaloceanspaces.com/WWW/Badge%202.svg)](https://www.digitalocean.com/?refcode=8d8bfeea8b4f&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge)
 
 ## Sample outputs
 
