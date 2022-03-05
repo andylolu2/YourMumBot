@@ -6,8 +6,15 @@ resource "digitalocean_droplet" "server" {
   ssh_keys = [
     data.digitalocean_ssh_key.do_rsa.id
   ]
-  tags      = [var.tag]
-  user_data = file("cloud_init.yaml")
+  tags       = [var.tag]
+  user_data  = file("cloud_init.yaml")
+  monitoring = true
+  ipv6       = true
+}
+
+resource "digitalocean_floating_ip" "floating_ip" {
+  droplet_id = digitalocean_droplet.server.id
+  region     = digitalocean_droplet.server.region
 }
 
 resource "digitalocean_firewall" "web" {
