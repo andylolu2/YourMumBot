@@ -1,31 +1,11 @@
 -include .env
 export
 
-DISCORD_CHAT_EXPORTER_DIR = "lib/discord-chat-exporter"
-STANFORD_CORENLP_DIR = "lib/stanford-corenlp"
-RAW_DATA_DIR := "data/raw/ext"
 DOCKER_NAME := yourmumbot
-DOCKER_TAG := $(DOCKER_NAME):latest
-DOCKER_MEM_MAX := "700m"
-DOCKER_CPU_MAX := "1.5" # 1024 * 3 / 4
 
 EC2_IP := $(shell terraform -chdir=terraform output -raw instance_ip)
 SSH_TARGET := root@$(EC2_IP)
 SSH_URL := "ssh://$(SSH_TARGET)"
-
-clean-data:
-	@rm -rf $(RAW_DATA_DIR)
-
-clean-logs:
-	@find . -type f -wholename "**/logs/**" -delete
-
-clean-tmps:
-	@find . -type f -name "*.props" -delete
-
-clean-docker:
-	@docker rmi $(DOCKER_TAG)
-
-clean-all: clean-data clean-logs clean-tmps
 
 gh-login:
 	@echo $(CR_PAT) | docker login $(GHCR_PREFIX) -u $(GH_USER_NAME) --password-stdin
@@ -33,20 +13,20 @@ gh-login:
 dh-login:
 	@echo $(DH_PW) | docker login -u $(DH_USER_NAME) --password-stdin
 
-run:
+run-bot:
 	@cd src && python -m bot.main
 
 run-api:
-	@cd src && uvicorn api.main:app --reload
+	@cd src && uvicorn api.main:app --reload --port $(API_PORT) --host 127.0.0.1
 	
 docker-build:
 	@echo "Building docker image..."
-	@docker-compose --compatibility -p $(DOCKER_NAME) build
-	@docker image prune -f
+	docker-compose --compatibility -p $(DOCKER_NAME) build
+	docker image prune -f
 
-docker-push:
+docker-push: docker-build
 	@echo "Pushing docker image..."
-	@docker-compose --compatibility -p $(DOCKER_NAME) push
+	docker-compose --compatibility -p $(DOCKER_NAME) push
 
 docker-run: docker-stop
 	@ENV=$(ENV) \
@@ -54,40 +34,35 @@ docker-run: docker-stop
 		docker-compose --compatibility -p $(DOCKER_NAME) up -d
 
 docker-stop:
-	@docker-compose --compatibility -p $(DOCKER_NAME) down
+	docker-compose --compatibility -p $(DOCKER_NAME) down
 
 docker-run-server:
-	@docker-compose --compatibility -p $(DOCKER_NAME) up -d corenlp languagetools
+	docker-compose --compatibility -p $(DOCKER_NAME) up -d corenlp languagetools
 
 docker-stop-server:
-	@docker-compose --compatibility -p $(DOCKER_NAME) stop corenlp languagetools
-	@docker-compose --compatibility -p $(DOCKER_NAME) rm -f corenlp languagetools
+	docker-compose --compatibility -p $(DOCKER_NAME) stop corenlp languagetools
+	docker-compose --compatibility -p $(DOCKER_NAME) rm -f corenlp languagetools
 
 docker-build-api:
-	@docker-compose --compatibility -p $(DOCKER_NAME) build corenlp languagetools api
+	docker-compose --compatibility -p $(DOCKER_NAME) build corenlp languagetools api
 
 docker-run-api:
-	@docker-compose --compatibility -p $(DOCKER_NAME) up -d corenlp languagetools api
+	docker-compose --compatibility -p $(DOCKER_NAME) up -d corenlp languagetools api
 
 docker-stop-api:
-	@docker-compose --compatibility -p $(DOCKER_NAME) stop corenlp languagetools api
-	@docker-compose --compatibility -p $(DOCKER_NAME) rm -f corenlp languagetools api
+	docker-compose --compatibility -p $(DOCKER_NAME) stop corenlp languagetools api
+	docker-compose --compatibility -p $(DOCKER_NAME) rm -f corenlp languagetools api
 
 docker-shell:
-	@docker exec -it $(DOCKER_NAME) /bin/bash
+	docker exec -it $(DOCKER_NAME) /bin/bash
 
 docker-stats:
 	@docker stats --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.MemPerc}}\t{{.NetIO}}\t{{.BlockIO}}\t{{.PIDs}}"
 
-docker-log:
-	@docker logs $(DOCKER_NAME)
-
 docker-logs:
-	@docker-compose --compatibility -p $(DOCKER_NAME) logs
+	docker-compose --compatibility -p $(DOCKER_NAME) logs --follow --tail=10 bot api prometheus
 
-build:
-	@$(MAKE) docker-build
-	@$(MAKE) docker-push 
+build: docker-build docker-push
 
 ssh-add-known-host:
 	ssh-keyscan -H $(EC2_IP) >> ~/.ssh/known_hosts
@@ -96,25 +71,29 @@ ssh-instance:
 	@ssh $(SSH_TARGET) "$(CMD)"
 
 deploy-pull:
-	@echo "Pulling image..."
+	@echo "Pulling images..."
 	docker-compose --compatibility -p $(DOCKER_NAME) -H $(SSH_URL) pull
 
-deploy-clean:
+deploy-setup: env-sub-config env-sub-web
+	@echo "Setting up prometheus files..."
+	@ssh $(SSH_TARGET) "mkdir -p prometheus"
+	@scp prometheus/config.secret.yml $(SSH_TARGET):prometheus/config.secret.yml
+	@scp prometheus/web.secret.yml $(SSH_TARGET):prometheus/web.secret.yml
+
+deploy-clean: deploy-pull
 	@echo "Stopping current containers..."
 	docker-compose --compatibility -p $(DOCKER_NAME) -H $(SSH_URL) down
 	docker -H $(SSH_URL) image prune -f
 	
-deploy-run:
-	@ENV=PROD DISCORD_BOT_TOKEN=$(DISCORD_BOT_TOKEN) \
+deploy-run: deploy-setup deploy-pull
+	@ENV=PROD API_PORT=80 PROM_PATH=/root \
 		docker-compose --compatibility -p $(DOCKER_NAME) -H $(SSH_URL) up -d --no-build
 
-deploy:
-	@$(MAKE) deploy-pull
-	@$(MAKE) deploy-clean
-	@$(MAKE) deploy-run
+deploy: deploy-setup deploy-pull deploy-clean deploy-run
 
-deploy-log-%:
-	@docker-compose --compatibility -p $(DOCKER_NAME) -H $(SSH_URL) logs $*
+deploy-logs:
+	@docker-compose --compatibility -p $(DOCKER_NAME) -H $(SSH_URL) logs \
+		--follow --tail=10 bot api prometheus
 
 deploy-stats:
 	@docker -H $(SSH_URL) stats \
@@ -122,3 +101,9 @@ deploy-stats:
 
 terraform-%:
 	terraform -chdir=terraform $*
+
+env-sub-config:
+	envsubst < prometheus/config.yml > prometheus/config.secret.yml
+
+env-sub-web:
+	envsubst < prometheus/web.yml > prometheus/web.secret.yml

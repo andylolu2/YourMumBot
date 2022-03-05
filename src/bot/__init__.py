@@ -5,11 +5,11 @@ import logging
 dotenv.load_dotenv()
 
 ENV = os.getenv("ENV", "DEV")
-assert ENV in ["DEV", "PROD"]
 PROD = (ENV == "PROD")
 
 # api
-API_ENDPOINT = "http://localhost:80/yourmumify"
+API_PORT = os.environ["API_PORT"]
+API_ENDPOINT = f"http://localhost:{API_PORT}/yourmumify"
 
 # logs
 LOG_FORMAT = "%(asctime)s::%(levelname)8s::%(name)s::%(request_id)5s:: %(message)s"

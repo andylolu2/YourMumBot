@@ -6,6 +6,7 @@ services:
       dockerfile: ./bot/Dockerfile
     image: andylolu24/yourmum-bot:latest
     environment:
+      - API_PORT
       - ENV
       - DISCORD_BOT_TOKEN
       - DISCORD_DEV_BOT_TOKEN
@@ -17,7 +18,7 @@ services:
         limits:
           memory: 50m
   api:
-    build: 
+    build:
       context: ./src
       dockerfile: ./api/Dockerfile
     image: andylolu24/yourmum-api:latest
@@ -41,7 +42,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 250m
+          memory: 200m
   languagetools:
     image: "erikvl87/languagetool"
     environment:
@@ -53,3 +54,16 @@ services:
       resources:
         limits:
           memory: 250m
+  prometheus:
+    image: prom/prometheus:latest
+    network_mode: host
+    command:
+      - "--web.config.file=/etc/prometheus/web.yml"
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    volumes:
+      - "${PROM_PATH}/prometheus/config.secret.yml:/etc/prometheus/prometheus.yml"
+      - "${PROM_PATH}/prometheus/web.secret.yml:/etc/prometheus/web.yml"
+    deploy:
+      resources:
+        limits:
+          memory: 50m

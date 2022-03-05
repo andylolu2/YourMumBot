@@ -5,6 +5,7 @@ detoxify==0.2.2
 language-tool-python==2.5.4
 nltk==3.6.2
 numpy==1.21.0
+prometheus-fastapi-instrumentator==5.7.1
 python-dotenv==0.18.0
 stanza==1.2.1
 tokenizers==0.10.3
