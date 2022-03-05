@@ -76,9 +76,9 @@ deploy-pull:
 
 deploy-setup: env-sub-config env-sub-web
 	@echo "Setting up prometheus files..."
-	@ssh $(SSH_TARGET) "mkdir -p prometheus"
-	@scp prometheus/config.secret.yml $(SSH_TARGET):prometheus/config.secret.yml
-	@scp prometheus/web.secret.yml $(SSH_TARGET):prometheus/web.secret.yml
+	ssh $(SSH_TARGET) "mkdir -p prometheus"
+	scp prometheus/config.secret.yml $(SSH_TARGET):prometheus/config.secret.yml
+	scp prometheus/web.secret.yml $(SSH_TARGET):prometheus/web.secret.yml
 
 deploy-clean: deploy-pull
 	@echo "Stopping current containers..."
@@ -86,13 +86,14 @@ deploy-clean: deploy-pull
 	docker -H $(SSH_URL) image prune -f
 	
 deploy-run: deploy-setup deploy-pull
-	@ENV=PROD API_PORT=80 PROM_PATH=/root \
+	@echo "Starting new containers..."
+	ENV=PROD API_PORT=80 PROM_PATH=/root \
 		docker-compose --compatibility -p $(DOCKER_NAME) -H $(SSH_URL) up -d --no-build
 
 deploy: deploy-setup deploy-pull deploy-clean deploy-run
 
 deploy-logs:
-	@docker-compose --compatibility -p $(DOCKER_NAME) -H $(SSH_URL) logs \
+	docker-compose --compatibility -p $(DOCKER_NAME) -H $(SSH_URL) logs \
 		--follow --tail=10 bot api prometheus
 
 deploy-stats:
