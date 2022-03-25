@@ -1,14 +1,13 @@
 from typing import Optional
 from contextvars import ContextVar
 import asyncio
-import time
 
-import aiohttp
-import aiohttp
+from aiohttp import ClientSession, ClientTimeout
 import discord
 
 from bot import API_ENDPOINT, API_TIMEOUT, LOG_FORMAT, LOG_LEVEL
 from helper.logger import get_logger
+from helper.timer import timer
 
 
 class YourMumClient(discord.Client):
@@ -23,23 +22,21 @@ class YourMumClient(discord.Client):
 
     async def post_api(self, text: str) -> Optional[str]:
         body = {'msg': text}
-        try:
-            start = time.time()
-            timeout = aiohttp.ClientTimeout(total=API_TIMEOUT)
-            async with aiohttp.ClientSession(timeout=timeout) as session:
-                async with session.post(API_ENDPOINT, json=body) as r:
-                    self.logger.info(f"API latency: {(time.time()-start):.4}s")
-                    if r.status == 200:
-                        res = await r.json()
-                        res = " ".join(res['response'])
-                        return res
-                    else:
-                        self.logger.warning(
-                            f'API respond with code {r.status}.')
-                        return None
-        except asyncio.TimeoutError:
-            self.logger.warning(f'API did not respond in {API_TIMEOUT}s.')
-            return None
+        with timer(logger=self.logger, prefix="API latency: "):
+            try:
+                async with ClientSession(timeout=ClientTimeout(API_TIMEOUT)) as session:
+                    async with session.post(API_ENDPOINT, json=body) as r:
+                        if r.status == 200:
+                            res = await r.json()
+                            res = " ".join(res['response'])
+                            return res
+                        else:
+                            self.logger.warning(
+                                f'API respond with code {r.status}.')
+                            return None
+            except asyncio.TimeoutError:
+                self.logger.warning(f'API did not respond in {API_TIMEOUT}s.')
+                return None
 
     @staticmethod
     def block(text, original):
@@ -68,9 +65,10 @@ class YourMumClient(discord.Client):
         self.logger.info("Ready!")
 
     async def on_message(self, message: discord.Message):
-        if not message.author.bot:
-            # time inference latency
-            start = time.time()
+        if message.author.bot:
+            return
+
+        with timer(logger=self.logger, prefix="Total latency: "):
             current_id = self.req_counter
             self.req_counter += 1
             self.request_id.set(current_id)
@@ -85,4 +83,3 @@ class YourMumClient(discord.Client):
                     content=yourmumify_content,
                     reference=message,
                     mention_author=False)
-            self.logger.info(f"Total latency: {(time.time()-start):.4}s")
