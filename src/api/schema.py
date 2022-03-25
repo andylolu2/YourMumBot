@@ -1,13 +1,10 @@
-from pydantic import BaseModel, constr, validator
+from pydantic import BaseModel, Field, validator
 
 from api import INPUT_MAX_CHAR, INPUT_MAX_WORDS
 
 
 class RequestBody(BaseModel):
-    msg: constr(
-        max_length=INPUT_MAX_CHAR,
-        strip_whitespace=True,
-    )
+    msg: str = Field(..., max_length=INPUT_MAX_CHAR, strip_whitespace=True)
 
     @validator('msg')
     def msg_max_words(cls, v: str):

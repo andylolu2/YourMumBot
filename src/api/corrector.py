@@ -35,10 +35,7 @@ class LanguageToolCorrector(Corrector):
     def ignore_match(self, match: ltp.Match) -> bool:
         return not match.ruleId == 'MORFOLOGIK_RULE_EN_US'
 
-    def correct(self, text: str, details=False):
+    def correct(self, text: str):
         matches = self._parser.check(text)
         matches = list(filter(self.ignore_match, matches))
-        if details:
-            return matches
-        else:
-            return ltp.utils.correct(text, matches)
+        return ltp.utils.correct(text, matches)
