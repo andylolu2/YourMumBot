@@ -1,4 +1,5 @@
 import types
+
 from fastapi import FastAPI, Request
 
 from api.requestvars import request_global

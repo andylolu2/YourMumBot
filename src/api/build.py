@@ -1,4 +1,4 @@
-import detoxify
+from detoxify import Detoxify
 
 # this downloads the model if not present
-detoxify.Detoxify('original-small')
+Detoxify('original-small')
