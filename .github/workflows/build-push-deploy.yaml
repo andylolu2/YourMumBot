@@ -1,4 +1,4 @@
-name: Build docker image, push to docker hub, deploy to EC2
+name: Build docker image, push to docker hub, deploy to server
 
 on:
   push:
