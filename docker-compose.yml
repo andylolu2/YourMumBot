@@ -24,6 +24,7 @@ services:
     image: andylolu24/yourmum-api:latest
     environment:
       - MODULE_NAME=api.main
+      - PORT=${API_PORT}
       - MAX_WORKERS=1
     network_mode: host
     depends_on:

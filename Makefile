@@ -14,10 +14,10 @@ dh-login:
 	@echo $(DH_PW) | docker login -u $(DH_USER_NAME) --password-stdin
 
 run-bot:
-	@cd src && python -m bot.main
+	cd src && python -m bot.main
 
 run-api:
-	@cd src && uvicorn api.main:app --reload --port $(API_PORT) --host 127.0.0.1
+	cd src && uvicorn api.main:app --port $(API_PORT) --host 127.0.0.1
 	
 docker-build:
 	@echo "Building docker image..."
@@ -29,14 +29,12 @@ docker-push: docker-build
 	docker-compose --compatibility -p $(DOCKER_NAME) push
 
 docker-run: docker-stop
-	@ENV=$(ENV) \
-		DISCORD_BOT_TOKEN=$(DISCORD_BOT_TOKEN) \
-		docker-compose --compatibility -p $(DOCKER_NAME) up -d
+	docker-compose --compatibility -p $(DOCKER_NAME) up -d
 
 docker-stop:
 	docker-compose --compatibility -p $(DOCKER_NAME) down
 
-docker-run-server:
+docker-run-server: docker-stop-server
 	docker-compose --compatibility -p $(DOCKER_NAME) up -d corenlp languagetools
 
 docker-stop-server:
