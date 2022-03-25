@@ -21,6 +21,9 @@ terraform.rc
 *.props
 **/__pycache__
 
+# pyenv
+.python-version
+
 # random experiments
 experiments
 
