@@ -13,10 +13,10 @@ Your Mum#2367 (856211082720444456)
 
 The bot accesses to the following information
 
-- ID of the server
-- Name of the server
+- ID of the server that the bot joins
+- Name of the server that the bot joins
 - ID of the channel where a message is sent
-- Content of the message
+- Content of the messages sent
 
 ## Stored data
 
@@ -24,8 +24,8 @@ No data is stored externally.
 
 No other data is stored with the exceptions mentioned below.
 
-- The ID of the channel where the mute (`quiet!`) command was called.
-- A timestamp of when the mute command was called.
+- The ID of the channel where a mute (`quiet!`) command was called.
+- A timestamp of when a mute command was called.
 
 ## Purpose of storing the data
 
