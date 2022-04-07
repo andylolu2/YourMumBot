@@ -1,8 +1,8 @@
-<!-- omit in toc -->
 <p align="center">
     <img src="static/banner.png" alt="discord logo" width="600">
 </p>
 
+<!-- omit in toc -->
 # YourMumBot
 
 YourMumBot is a discord bot that reads at text sent by 
@@ -28,21 +28,22 @@ but is not limited to:
 
 <!-- omit in toc -->
 ## Table of contents
-- [YourMumBot](#yourmumbot)
-  - [Up and Running](#up-and-running)
-  - [Sample outputs](#sample-outputs)
-  - [How it works](#how-it-works)
-    - [Pipeline](#pipeline)
-  - [Discord Bot](#discord-bot)
-    - [No of requests](#no-of-requests)
-    - [Input size](#input-size)
-    - [Latency](#latency)
-  - [API](#api)
-    - [Endpoint](#endpoint)
-    - [Responses](#responses)
-  - [Run your own API / Bot](#run-your-own-api--bot)
-    - [Pre-Built Docker Images](#pre-built-docker-images)
-    - [Memory requirements](#memory-requirements)
+- [Up and Running](#up-and-running)
+- [Sample outputs](#sample-outputs)
+- [How it works](#how-it-works)
+  - [Pipeline](#pipeline)
+- [Discord Bot](#discord-bot)
+  - [No of requests](#no-of-requests)
+  - [Input size](#input-size)
+  - [Latency](#latency)
+- [API](#api)
+  - [Endpoint](#endpoint)
+  - [Responses](#responses)
+- [Run your own API / Bot](#run-your-own-api--bot)
+  - [Pre-Built Docker Images](#pre-built-docker-images)
+  - [Memory requirements](#memory-requirements)
+- [Privacy policy](#privacy-policy)
+
 
 ## Up and Running
 
@@ -155,3 +156,7 @@ docker-compose up -d
 
 1 GB of RAM is barely sufficient to run all related services for this model.
 Swap file is needed to prevent Out-Of-Memory errors.
+
+## Privacy policy
+
+The privacy policy is available [here](static/docs/privacy-policy.md).
