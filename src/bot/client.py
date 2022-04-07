@@ -1,85 +1,98 @@
-from typing import Optional
-from contextvars import ContextVar
-import asyncio
+import random
+from datetime import datetime, timedelta
 
-from aiohttp import ClientSession, ClientTimeout
 import discord
+from discord.ext import commands
 
-from bot import API_ENDPOINT, API_TIMEOUT, LOG_FORMAT, LOG_LEVEL
-from helper.logger import get_logger
+
+from bot.logger import logger, request_id
+from bot.helper import post_api, block
+from bot.contexts import mute_dict
 from helper.timer import timer
 
 
-class YourMumClient(discord.Client):
-    req_counter = 0
-    request_id = ContextVar('request_id')
-    logger = get_logger(
-        name=__name__,
-        log_format=LOG_FORMAT,
-        level=LOG_LEVEL,
-        contextvars=[('request_id', request_id)]
-    )
+class HelpCommand(commands.DefaultHelpCommand):
+    def get_ending_note(self):
+        return (
+            "Apart from that, just say something and your mum will respond to it.\n"
+            "For example, try 'A bot entered the chat.'"
+        )
 
-    async def post_api(self, text: str) -> Optional[str]:
-        body = {'msg': text}
-        with timer(logger=self.logger, prefix="API latency: "):
-            try:
-                async with ClientSession(timeout=ClientTimeout(API_TIMEOUT)) as session:
-                    async with session.post(API_ENDPOINT, json=body) as r:
-                        if r.status == 200:
-                            res = await r.json()
-                            res = " ".join(res['response'])
-                            return res
-                        else:
-                            self.logger.warning(
-                                f'API respond with code {r.status}.')
-                            return None
-            except asyncio.TimeoutError:
-                self.logger.warning(f'API did not respond in {API_TIMEOUT}s.')
-                return None
 
-    @staticmethod
-    def block(text, original):
-        if not isinstance(text, str):
-            return True
-        yourmum = "your mum"
-        _text = text.lower().replace(" ", "")
-        _yourmum = yourmum.lower().replace(" ", "")
-        _original = original.lower().replace(" ", "")
-        if text == "":
-            return True
-        if _text == _original:
-            return True
-        if _text == _yourmum:
-            return True
-        # sanity check
-        if not 'your mum' in text.lower():
-            return True
-        return False
+command_prefix = "mum "
+client = commands.Bot(
+    command_prefix=command_prefix,
+    help_command=HelpCommand(no_category="Commands")
+)
 
-    async def on_ready(self):
-        self.logger.info(f'{self.user} is connected to the following guilds:')
-        for guild in self.guilds:
-            self.logger.info(f'{guild.name} (id: {guild.id})')
-        self.logger.info("Warming up the model...")
-        self.logger.info("Ready!")
 
-    async def on_message(self, message: discord.Message):
-        if message.author.bot:
+@client.command(name="stats")
+async def stats(ctx: commands.Context):
+    '''
+    Your mum will tell you the current statistics
+    '''
+    num_servers = len(client.guilds)
+    await ctx.send(f"Your mum is telling jokes in {num_servers} servers!")
+
+
+@client.command(name="quiet!")
+async def quiet(ctx: commands.Context):
+    '''
+    Your mum will shutup for a while
+    '''
+    cid = ctx.channel.id
+    if cid in mute_dict and datetime.now() < mute_dict[cid]:
+        return
+
+    duration = random.uniform(15, 60)
+    mute_dict[cid] = datetime.now() + timedelta(minutes=duration)
+    await ctx.send(f"OK, fine. :triumph:")
+
+
+@client.command(name="unmute")
+async def unmute(ctx: commands.Context):
+    '''
+    Your mum will continue to annoy you
+    '''
+    cid = ctx.channel.id
+    if cid in mute_dict:
+        del mute_dict[cid]
+    await ctx.message.add_reaction("🤫")
+
+
+@client.listen()
+async def on_ready():
+    logger.info(f'{client.user} is connected to the following guilds:')
+    for guild in client.guilds:
+        logger.info(f'{guild.name} (id: {guild.id})')
+    logger.info("Ready!")
+
+
+@client.listen()
+async def on_message(message: discord.Message):
+    if message.author.bot:
+        return
+
+    cid = message.channel.id
+    if cid in mute_dict:
+        if datetime.now() > mute_dict[cid]:
+            del mute_dict[cid]
+        else:
             return
 
-        with timer(logger=self.logger, prefix="Total latency: "):
-            current_id = self.req_counter
-            self.req_counter += 1
-            self.request_id.set(current_id)
+    with timer(logger=logger, prefix="Total latency: "):
+        request_id.set(request_id.get() + 1)
 
-            content = message.clean_content
-            self.logger.debug(f"Input: {content}")
+        content = str(message.clean_content)
+        if content.startswith(command_prefix):
+            return
+        logger.debug(f"Input: {content}")
 
-            yourmumify_content = await self.post_api(content)
-            if not self.block(yourmumify_content, content):
-                self.logger.debug(f"Yourmumified: {yourmumify_content}")
-                await message.channel.send(
-                    content=yourmumify_content,
-                    reference=message,
-                    mention_author=False)
+        yourmumify_content = await post_api(content)
+        if not block(yourmumify_content, content):
+            logger.debug(f"Yourmumified: {yourmumify_content}")
+            await message.channel.send(
+                content=yourmumify_content,
+                reference=message,
+                mention_author=False
+            )
