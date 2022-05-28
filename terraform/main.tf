@@ -4,7 +4,7 @@ resource "digitalocean_droplet" "server" {
   region = var.region
   size   = var.app_size
   ssh_keys = [
-    data.digitalocean_ssh_key.do_rsa.id
+    data.digitalocean_ssh_key.ssh_key.id
   ]
   tags       = [var.tag]
   user_data  = file("cloud_init.yaml")

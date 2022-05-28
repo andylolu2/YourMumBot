@@ -20,6 +20,6 @@ provider "digitalocean" {
   token = var.do_token
 }
 
-data "digitalocean_ssh_key" "do_rsa" {
-  name = "do_rsa"
+data "digitalocean_ssh_key" "ssh_key" {
+  name = "fedora_g14"
 }
