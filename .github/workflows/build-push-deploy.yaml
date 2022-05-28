@@ -8,6 +8,8 @@ on:
 jobs:
   setup-build-push-deploy:
     runs-on: ubuntu-latest
+    env:
+      API_PORT: 80
 
     steps:
       - name: Checkout
