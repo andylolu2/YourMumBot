@@ -16,34 +16,17 @@ The bot accesses to the following information
 - ID of the server that the bot joins
 - Name of the server that the bot joins
 - ID of the channel where a message is sent
-- Content of the messages sent
+- Content of the messages sent when being mentioned or in a DM.
 
 ## Stored data
 
-No data is stored externally.
+No data is stored. The bot is completely stateless.
 
-No other data is stored with the exceptions mentioned below.
-
-- The ID of the channel where a mute (`quiet!`) command was called.
-- A timestamp of when a mute command was called.
-
-## Purpose of storing the data
-
-It is required to keep track of the mute status of the bot in a 
-particular channel.
 
 ## Contact information
 
-The owner and moderator of this bot is 
-**BjergerK1ng#2545 (322965201827921924)**.
+The owner and moderator of this bot is **BjergerK1ng#2545 (322965201827921924)**.
 
 Any questions, issues or concerns are welcomed via direct messages.
 
 Alternatively, you may raise an issue in this GitHub repository.
-
-## Data Removal
-
-There are two options to remove the data:
-
-1. Kick the bot from the server and contact the owner.
-2. Do not use the mute feature after unmuting the bot.
