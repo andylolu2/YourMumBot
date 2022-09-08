@@ -1,8 +1,9 @@
 import discord
 from discord.ext import commands
 
-from bot.helper import block, post_api
-from bot.logger import logger, request_id
+from bot.contexts import inc_request_id
+from bot.helper import block_input, block_output, post_api
+from bot.logger import logger
 from helper.timer import timer
 
 
@@ -61,7 +62,7 @@ async def on_message(message: discord.Message):
             return
 
         logger.debug(f"Input: {content}")
-
+        await inc_request_id()
         yourmumify_content = await post_api(content)
 
         if not block_output(yourmumify_content, content):
