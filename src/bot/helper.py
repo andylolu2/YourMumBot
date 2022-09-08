@@ -1,8 +1,7 @@
-from typing import Optional
 import asyncio
+from typing import Optional
 
 from aiohttp import ClientSession, ClientTimeout
-
 
 from bot import API_ENDPOINT, API_TIMEOUT
 from bot.logger import logger
@@ -27,7 +26,12 @@ async def post_api(text: str) -> Optional[str]:
             return None
 
 
-def block(text, original):
+def block_input(text: str):
+    _text = text.lower().replace(" ", "")
+    return len(_text) == 0
+
+
+def block_output(text, original):
     if not isinstance(text, str):
         return True
     _text = text.lower().replace(" ", "")

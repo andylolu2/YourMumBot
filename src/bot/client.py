@@ -57,11 +57,14 @@ async def on_message(message: discord.Message):
         if content.startswith(prefix):
             content = content[len(prefix) :]
 
-        request_id.set(request_id.get() + 1)
+        if block_input(content):
+            return
+
         logger.debug(f"Input: {content}")
 
         yourmumify_content = await post_api(content)
-        if not block(yourmumify_content, content):
+
+        if not block_output(yourmumify_content, content):
             logger.debug(f"Yourmumified: {yourmumify_content}")
             await message.channel.send(
                 content=yourmumify_content, reference=message, mention_author=False
