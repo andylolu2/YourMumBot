@@ -16,7 +16,5 @@ logger = get_logger(
     name=LOG_NAME,
     log_format=LOG_FORMAT,
     level=LOG_LEVEL,
-    callbacks=[
-        ('client_ip', lambda: g().client_ip)
-    ]
+    callbacks=[("client_ip", lambda: g().client_ip)],
 )

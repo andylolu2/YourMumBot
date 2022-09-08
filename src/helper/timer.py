@@ -5,7 +5,7 @@ import time
 
 
 @contextmanager
-def timer(logger: Optional[Logger] = None, prefix: str = '', decimal: int = 2):
+def timer(logger: Optional[Logger] = None, prefix: str = "", decimal: int = 2):
     start = time.time()
     yield
     time_spent = round(1000 * (time.time() - start), decimal)
