@@ -10,20 +10,20 @@ from helper.timer import timer
 
 
 async def post_api(text: str) -> Optional[str]:
-    body = {'msg': text}
+    body = {"msg": text}
     with timer(logger=logger, prefix="API latency: "):
         try:
             async with ClientSession(timeout=ClientTimeout(API_TIMEOUT)) as session:
                 async with session.post(API_ENDPOINT, json=body) as r:
                     if r.status == 200:
                         res = await r.json()
-                        res = " ".join(res['response'])
+                        res = " ".join(res["response"])
                         return res
                     else:
-                        logger.warning(f'API respond with code {r.status}.')
+                        logger.warning(f"API respond with code {r.status}.")
                         return None
         except asyncio.TimeoutError:
-            logger.warning(f'API did not respond in {API_TIMEOUT}s.')
+            logger.warning(f"API did not respond in {API_TIMEOUT}s.")
             return None
 
 
@@ -37,6 +37,6 @@ def block(text, original):
     if _text == _original:
         return True
     # sanity check
-    if not 'your mum' in text.lower():
+    if not "your mum" in text.lower():
         return True
     return False

@@ -4,10 +4,9 @@ import logging
 
 
 class ContextFilter(logging.Filter):
-    def __init__(self,
-                 contextvar_name: str,
-                 contextvar: ContextVar,
-                 name: str = '') -> None:
+    def __init__(
+        self, contextvar_name: str, contextvar: ContextVar, name: str = ""
+    ) -> None:
         super().__init__(name=name)
         self.contextvar_name = contextvar_name
         self.contextvar = contextvar
@@ -16,16 +15,15 @@ class ContextFilter(logging.Filter):
         try:
             value = self.contextvar.get()
         except LookupError:
-            value = ''
+            value = ""
         setattr(record, self.contextvar_name, value)
         return super().filter(record)
 
 
 class CallBackFilter(logging.Filter):
-    def __init__(self,
-                 contextvar_name: str,
-                 callback: Callable[[], Any],
-                 name: str = '') -> None:
+    def __init__(
+        self, contextvar_name: str, callback: Callable[[], Any], name: str = ""
+    ) -> None:
         self.contextvar_name = contextvar_name
         self.callback = callback
         super().__init__(name=name)
@@ -34,17 +32,18 @@ class CallBackFilter(logging.Filter):
         try:
             value = self.callback()
         except Exception:
-            value = ''
+            value = ""
         setattr(record, self.contextvar_name, value)
         return super().filter(record)
 
 
-def get_logger(name: str,
-               log_format: str,
-               level: int,
-               contextvars: List[Tuple[str, ContextVar]] = [],
-               callbacks: List[Tuple[str, Callable[[], Any]]] = []
-               ) -> logging.Logger:
+def get_logger(
+    name: str,
+    log_format: str,
+    level: int,
+    contextvars: List[Tuple[str, ContextVar]] = [],
+    callbacks: List[Tuple[str, Callable[[], Any]]] = [],
+) -> logging.Logger:
     logger = logging.getLogger(name)
     if logger.hasHandlers():
         logger.handlers.clear()

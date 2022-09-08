@@ -19,21 +19,19 @@ class LanguageToolCorrector(Corrector):
         retries = LT_MAX_RETRIES
         while self._parser is None:
             try:
-                self._parser = ltp.LanguageTool(LANG_NAME,
-                                                remote_server=LT_ENDPOINT)
-                logger.info('LanguageTools Connected!')
+                self._parser = ltp.LanguageTool(LANG_NAME, remote_server=LT_ENDPOINT)
+                logger.info("LanguageTools Connected!")
             except ltp.utils.LanguageToolError as e:
                 if retries <= 0:
                     raise e
                 else:
-                    logger.info(
-                        'Failed to connect to language tools. Reconnecting...')
-                    logger.info(f'{retries} retires left...')
+                    logger.info("Failed to connect to language tools. Reconnecting...")
+                    logger.info(f"{retries} retires left...")
                     time.sleep(LT_TIMEOUT)
                 retries -= 1
 
     def ignore_match(self, match: ltp.Match) -> bool:
-        return not match.ruleId == 'MORFOLOGIK_RULE_EN_US'
+        return not match.ruleId == "MORFOLOGIK_RULE_EN_US"
 
     def correct(self, text: str):
         matches = self._parser.check(text)

@@ -22,19 +22,16 @@ def keep_warm():
 
 @router.get("/")
 async def index():
-    return {'msg': 'Hello to the YourMum API!'}
+    return {"msg": "Hello to the YourMum API!"}
 
 
 @router.post("/yourmumify")
 async def yourmumify(req: Request, body: RequestBody):
     if lock.locked():
         raise HTTPException(
-            status_code=HTTP_503_SERVICE_UNAVAILABLE, detail="Service busy")
+            status_code=HTTP_503_SERVICE_UNAVAILABLE, detail="Service busy"
+        )
     async with lock:
-        logger.debug(f'msg: {body.msg}')
+        logger.debug(f"msg: {body.msg}")
         outputs, scores = await model.async_yourmumify(body.msg)
-        return {
-            'input': body.msg,
-            'response': outputs,
-            'scores': scores
-        }
+        return {"input": body.msg, "response": outputs, "scores": scores}
