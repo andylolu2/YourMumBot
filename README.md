@@ -59,14 +59,17 @@ Try the API endpoint: [here](http://46.101.67.210/docs)
 
 ## Sample outputs
 
+> Since release v1.8.0, interactions through the discord bot must 
+> mention the bot (@Your Mum). 
+
 ```
-User: Flat earthers think that the earth is flat
+User: @Your Mum Flat earthers think that the earth is flat
 Bot: Flat earthers think that your mum is flat
 
-User: League of legends is such a shit game
-Bot: Your mum is such a shit game
+User: @Your Mum League of legends is such a bad game
+Bot: Your mum is such a bad game
 
-User: Today is a good day. You are very tall.
+User: @Your Mum Today is a good day. You are very tall.
 Bot: Today is your mum. Your mum is very tall.
 ```
 
