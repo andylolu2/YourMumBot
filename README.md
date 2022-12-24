@@ -42,6 +42,8 @@ Click here :point_down:
 
 [<img src="static/readme/logo.png" alt="discord logo" width="100">](https://discord.com/api/oauth2/authorize?client_id=856211082720444456&permissions=2048&scope=applications.commands%20bot)
 
+To interact with the bot, invite it to your server and use the slash command `/mum_joke`. For example, try `/mum_joke prompt:Beep boop a bot entered the chat`
+
 ## Demo
 
 ![Demo](static/readme/demo.png)
@@ -52,6 +54,7 @@ From v2.0.0 onwards, **Your Mum** is now powered by [Cohere](https://cohere.ai/)
 
 To help the language model learn how to create your mum jokes, a few examples have been given to it in its prompt, these examples can been found in the [config.json](packages/bot/your_mum/config.json) file.
 
+Due to the probabilistic nature of language models, the output of the bot is stochastic, meaning it that it not guaranteed to produce the same results even when given the same prompt multiple times.
 
 ## Discord bot
 
