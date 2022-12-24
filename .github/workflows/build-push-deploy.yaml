@@ -16,43 +16,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Setup Terraform and login to Terraform Cloud
-        uses: hashicorp/setup-terraform@v1
-        with:
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-          terraform_wrapper: false
-
-      - name: Terraform init
-        run: make terraform-init
-
-      - name: Install SSH key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.DO_SSH_PRIVATE_KEY }}
-          known_hosts: "placeholder"
-
-      - name: SSH add known hosts
-        run: make ssh-add-known-host
-
-      - name: Try SSH to instance
-        run: make ssh-instance CMD="pwd"
-
-      - name: Build
-        run: make docker-build
-
-      - name: Push
-        run: make docker-push
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
       - name: Deploy
-        run: make deploy
-        env:
-          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
-          PROM_PWD_HASH: ${{ secrets.PROM_PWD_HASH }}
-          GRAFANA_CLD_USR: ${{ secrets.GRAFANA_CLD_USR }}
-          GRAFANA_CLD_PWD: ${{ secrets.GRAFANA_CLD_PWD }}
+        run: make do-prod-deploy
