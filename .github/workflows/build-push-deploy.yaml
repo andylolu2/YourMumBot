@@ -25,4 +25,11 @@ jobs:
         run: doctl serverless install
 
       - name: Deploy
-        run: make do-prod-deploy
+        env:
+          DISCORD_PUBLIC_KEY: ${{ secrets.DISCORD_PUBLIC_KEY }}
+          DISCORD_APP_ID: ${{ secrets.DISCORD_APP_ID }}
+          COHERE_API_KEY: ${{ secrets.COHERE_API_KEY }}
+          LOGTAIL_HTTP_SOURCE_TOKEN: ${{ secrets.LOGTAIL_HTTP_SOURCE_TOKEN }}
+        run: |
+          touch .prod.env
+          make do-prod-deploy
