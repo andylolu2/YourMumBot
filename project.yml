@@ -1,0 +1,24 @@
+packages:
+  - name: bot
+    functions:
+      - name: your_mum
+        binary: false
+        main: "main"
+        runtime: python:3.9
+        web: raw
+        environment:
+          DISCORD_PUBLIC_KEY: "${DISCORD_PUBLIC_KEY}"
+          DISCORD_APP_ID: "${DISCORD_APP_ID}"
+          COHERE_API_KEY: "${COHERE_API_KEY}"
+          LOG_DESTINATIONS: '[{"logtail":{"token":"${LOGTAIL_HTTP_SOURCE_TOKEN}"}}]'
+        limits:
+          timeout: 30000
+          memory: 128
+        triggers:
+          - name: ping
+            sourceType: scheduler
+            sourceDetails:
+              cron: "* * * * *"
+              withBody:
+                http:
+                  source: "scheduler"
