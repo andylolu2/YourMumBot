@@ -20,7 +20,7 @@ The bot accesses to the following information
 
 ## Stored data
 
-No data is stored. The bot is completely stateless.
+No data is stored, except error logs might sometimes contain request-specific information. 
 
 
 ## Contact information
