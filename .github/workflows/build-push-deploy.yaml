@@ -21,5 +21,8 @@ jobs:
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
+      - name: Setup
+        run: doctl serverless install
+
       - name: Deploy
         run: make do-prod-deploy
