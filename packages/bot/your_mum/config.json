@@ -1,0 +1,18 @@
+{
+  "introduction": "The following program makes your mum jokes by incorporating ideas from a prompt. A your mum joke is a joke which the words \"your mum\" must appear in it, and is meant to be used as a funny response to the given prompt. The joke does not need to make logical sense, but it has to be grammatically correct.",
+  "samples": [
+    {
+      "prompt": "Hey, how are you?",
+      "joke": "Hey, how is your mum?"
+    },
+    {
+      "prompt": "When you try to wall off the sea, communities here learned, the sea prevails.",
+      "joke": "Your mum prevails when you try to wall off the sea."
+    },
+    {
+      "prompt": "The Galapagos Islands is the home to 25 thousand people.",
+      "joke": "Your mum is the home to 25 thousand people."
+    }
+  ],
+  "defaultResponse": "I will not make fun of your mum this time."
+}

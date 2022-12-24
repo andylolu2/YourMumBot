@@ -1,0 +1,14 @@
+{
+  "name": "mum_joke",
+  "description": "Makes a your mum joke from a given prompt.",
+  "type": 1,
+  "options": [
+    {
+      "type": 3,
+      "name": "prompt",
+      "description": "Prompt to generate the your mum joke.",
+      "max_length": 200,
+      "required": true
+    }
+  ]
+}
