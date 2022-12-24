@@ -27,12 +27,11 @@ terraform.rc
 # random experiments
 experiments
 
-# packages
-.*venv
-lib
-
 # data
 data/**/ext
 
 # logs
 **/logs
+
+# digitalocean deployment files
+.deployed

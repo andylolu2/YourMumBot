@@ -3,9 +3,26 @@ export
 
 DOCKER_NAME := yourmumbot
 
-EC2_IP := $(shell terraform -chdir=terraform output -raw instance_ip)
-SSH_TARGET := root@$(EC2_IP)
-SSH_URL := "ssh://$(SSH_TARGET)"
+# EC2_IP := $(shell terraform -chdir=terraform output -raw instance_ip)
+# SSH_TARGET := root@$(EC2_IP)
+# SSH_URL := "ssh://$(SSH_TARGET)"
+
+
+do-dev-deploy:
+	doctl serverless connect your-mum-bot-dev
+	doctl serverless deploy . --env .dev.env --remote-build
+
+do-dev-url:
+	@doctl serverless connect your-mum-bot-dev > /dev/null
+	@doctl serverless function get bot/your_mum --url
+
+do-prod-deploy:
+	doctl serverless connect your-mum-bot-prod
+	doctl serverless deploy . --env .prod.env --remote-build
+
+do-prod-url:
+	@doctl serverless connect your-mum-bot-prod > /dev/null
+	@doctl serverless function get bot/your_mum --url
 
 gh-login:
 	@echo $(CR_PAT) | docker login $(GHCR_PREFIX) -u $(GH_USER_NAME) --password-stdin
