@@ -11,12 +11,9 @@ Your Mum#2367 (856211082720444456)
 
 ## Accessed data
 
-The bot accesses to the following information
+The bot accesses the following information
 
-- ID of the server that the bot joins
-- Name of the server that the bot joins
-- ID of the channel where a message is sent
-- Content of the messages sent when being mentioned or in a DM.
+- Content sent through the `prompt` parameter of the `/mum_joke` slash command. 
 
 ## Stored data
 
