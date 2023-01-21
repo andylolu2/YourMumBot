@@ -34,24 +34,25 @@ class YourMumDiscordAPI(DiscordAPI):
         self.default = config["defaultResponse"]
 
     def make_joke(self, prompt: str):
-        prediction = self.co.generate(
-            model="xlarge",
-            prompt=self.template.format(prompt=prompt),
-            temperature=0.4,
-            k=0,
-            p=1,
-            frequency_penalty=0,
-            presence_penalty=0,
-            stop_sequences=["--", "\n"],
-            num_generations=1,
-        )
+        try:
+            prediction = self.co.generate(
+                model="xlarge",
+                prompt=self.template.format(prompt=prompt),
+                temperature=0.4,
+                k=0,
+                p=1,
+                frequency_penalty=0,
+                presence_penalty=0,
+                stop_sequences=["--", "\n"],
+                num_generations=1,
+            )
 
-        joke = prediction.generations[0].text
-
-        if "your mum" not in joke.lower():
+            joke = prediction.generations[0].text
+            if "your mum" not in joke.lower():
+                return None
+            return joke
+        except cohere.CohereError:
             return None
-
-        return joke
 
     def custom_handler(self, body):
         data = body["data"]
