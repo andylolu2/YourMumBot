@@ -35,3 +35,5 @@ data/**/ext
 
 # digitalocean deployment files
 .deployed
+virtualenv
+__deployer__.zip

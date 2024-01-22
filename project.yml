@@ -13,7 +13,7 @@ packages:
           LOG_DESTINATIONS: '[{"logtail":{"token":"${LOGTAIL_HTTP_SOURCE_TOKEN}"}}]'
         limits:
           timeout: 30000
-          memory: 128
+          memory: 256
         triggers:
           - name: ping
             sourceType: scheduler

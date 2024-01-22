@@ -1,6 +1,6 @@
 do-dev-deploy:
 	doctl serverless connect your-mum-bot-dev
-	doctl serverless deploy . --env .dev.env --remote-build
+	doctl serverless deploy . --env .dev.env
 
 do-dev-url:
 	@doctl serverless connect your-mum-bot-dev > /dev/null
@@ -8,7 +8,7 @@ do-dev-url:
 
 do-prod-deploy:
 	doctl serverless connect your-mum-bot-prod
-	doctl serverless deploy . --env .prod.env --remote-build
+	doctl serverless deploy . --env .prod.env
 
 do-prod-url:
 	@doctl serverless connect your-mum-bot-prod > /dev/null

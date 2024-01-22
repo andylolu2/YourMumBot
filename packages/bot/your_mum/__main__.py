@@ -1,9 +1,10 @@
 import json
 import os
+import traceback
 
 import cohere
 
-from lib.handler import DiscordAPI, InteractionCallbackType
+from .handler import DiscordAPI, InteractionCallbackType
 
 
 class YourMumDiscordAPI(DiscordAPI):
@@ -34,25 +35,16 @@ class YourMumDiscordAPI(DiscordAPI):
         self.default = config["defaultResponse"]
 
     def make_joke(self, prompt: str):
-        try:
-            prediction = self.co.generate(
-                model="xlarge",
-                prompt=self.template.format(prompt=prompt),
-                temperature=0.4,
-                k=0,
-                p=1,
-                frequency_penalty=0,
-                presence_penalty=0,
-                stop_sequences=["--", "\n"],
-                num_generations=1,
-            )
+        prediction = self.co.generate(
+            model="command",
+            prompt=self.template.format(prompt=prompt),
+            stop_sequences=["--", "\n"],
+        )
 
-            joke = prediction.generations[0].text
-            if "your mum" not in joke.lower():
-                return None
-            return joke
-        except cohere.CohereError:
+        joke = prediction.generations[0].text
+        if "your mum" not in joke.lower():
             return None
+        return joke
 
     def custom_handler(self, body):
         data = body["data"]
@@ -75,7 +67,7 @@ class YourMumDiscordAPI(DiscordAPI):
                 {"type": InteractionCallbackType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE},
             )
             if not response.ok:
-                print(response.json())
+                print(json.dumps(response.json(), indent=2))
 
             prompt = prompts[0]["value"]
             joke = self.make_joke(prompt)
@@ -90,7 +82,7 @@ class YourMumDiscordAPI(DiscordAPI):
                 interaction_token, {"content": content}
             )
             if not response.ok:
-                print(response.json())
+                print(json.dumps(response.json(), indent=2))
 
             return {}
 
@@ -101,11 +93,12 @@ class YourMumDiscordAPI(DiscordAPI):
 discord_api = YourMumDiscordAPI()
 
 
-def main(args: dict):
+def main(event):
     try:
-        return discord_api.handle(event=args["http"])
+        return discord_api.handle(event=event["http"])
     except Exception as e:
-        print(e)
+        print(repr(e))
+        print(traceback.format_exc())
         return YourMumDiscordAPI.make_response(
             500, {"msg": "An interval server error occurred. Please view the logs."}
         )
