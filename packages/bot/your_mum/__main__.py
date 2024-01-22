@@ -3,8 +3,7 @@ import os
 import traceback
 
 import cohere
-
-from .handler import DiscordAPI, InteractionCallbackType
+from handler import DiscordAPI, InteractionCallbackType
 
 
 class YourMumDiscordAPI(DiscordAPI):
